@@ -36,15 +36,13 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="#home" className="flex items-center gap-3 group">
-            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 transition-transform duration-300 group-hover:scale-110">
-              <Camera className="h-6 w-6 text-background" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[var(--font-heading)] text-xl font-bold tracking-wider text-foreground">
+          <Link href="#home" className="flex items-center gap-2 group">
+            <Camera className="h-5 w-5 text-amber-400 transition-transform duration-300 group-hover:scale-110" />
+            <div className="flex items-baseline gap-1">
+              <span className="font-[var(--font-heading)] text-lg font-semibold tracking-wide text-foreground">
                 BMA
               </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-amber-400">
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
                 Photography
               </span>
             </div>
@@ -72,9 +70,9 @@ export function Header() {
             </div>
             <a
               href="tel:+254725297393"
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105"
+              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-400"
             >
-              <Phone className="h-4 w-4" />
+              <Phone className="h-4 w-4 text-amber-400" />
               <span>+254 725 297393</span>
             </a>
           </div>
@@ -120,9 +118,9 @@ export function Header() {
             </div>
             <a
               href="tel:+254725297393"
-              className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-5 py-3 text-sm font-semibold text-background"
+              className="flex items-center gap-2 text-sm text-muted-foreground"
             >
-              <Phone className="h-4 w-4" />
+              <Phone className="h-4 w-4 text-amber-400" />
               <span>+254 725 297393</span>
             </a>
           </div>
