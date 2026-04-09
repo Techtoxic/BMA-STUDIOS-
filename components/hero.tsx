@@ -110,7 +110,7 @@ export function Hero() {
       </div>
 
       {/* Main Content - Left Aligned, Distributed */}
-      <div className="relative z-10 flex-1 flex items-center">
+      <div className="relative z-10 flex-1 flex items-center pt-20 sm:pt-0">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
@@ -189,9 +189,9 @@ export function Hero() {
       </div>
 
       {/* Bottom Section - Stats Left, Studio Name Right */}
-      <div className="relative z-10 pb-6 sm:pb-8">
+      <div className="relative z-10 mb-8 sm:mb-6">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-6">
             
             {/* Left - Stats (No Cards, Small Font) */}
             <div 
@@ -253,8 +253,8 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10">
+      {/* Scroll Indicator - Hidden on mobile to save space */}
+      <div className="hidden sm:block absolute bottom-2 left-1/2 -translate-x-1/2 z-10">
         <a href="#services" className="flex flex-col items-center gap-0.5 text-muted-foreground/60 hover:text-amber-400 transition-colors">
           <ChevronDown className="h-4 w-4 animate-bounce" />
         </a>
