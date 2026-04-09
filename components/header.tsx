@@ -1,85 +1,133 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Menu, X, Camera } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X, Phone, MapPin, Camera } from "lucide-react";
 
-const navItems = [
+const navLinks = [
+  { name: "Home", href: "#home" },
   { name: "Services", href: "#services" },
-  { name: "Gallery", href: "#gallery" },
+  { name: "Portfolio", href: "#portfolio" },
+  { name: "Products", href: "#products" },
   { name: "About", href: "#about" },
   { name: "Contact", href: "#contact" },
-]
+];
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-      <nav className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? "bg-background/95 backdrop-blur-md py-3 shadow-lg shadow-black/20"
+          : "bg-transparent py-5"
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Camera className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
+          <Link href="#home" className="flex items-center gap-3 group">
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 transition-transform duration-300 group-hover:scale-110">
+              <Camera className="h-6 w-6 text-background" />
+            </div>
             <div className="flex flex-col">
-              <span className="font-[family-name:var(--font-heading)] text-xl lg:text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-[var(--font-heading)] text-xl font-bold tracking-wider text-foreground">
                 BMA
               </span>
-              <span className="text-[10px] lg:text-xs text-muted-foreground -mt-1 tracking-widest uppercase">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-amber-400">
                 Photography
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => (
               <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors tracking-wide uppercase"
+                key={link.name}
+                href={link.href}
+                className="relative text-sm font-medium text-foreground/80 transition-colors hover:text-amber-400 group"
               >
-                {item.name}
+                {link.name}
+                <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
-            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link href="tel:+254725297393">Book Now</Link>
-            </Button>
+          </nav>
+
+          {/* Contact Info - Desktop */}
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 text-amber-400" />
+              <span>Nyeri, Kenya</span>
+            </div>
+            <a
+              href="tel:+254725297393"
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105"
+            >
+              <Phone className="h-4 w-4" />
+              <span>+254 725 297393</span>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            type="button"
-            className="lg:hidden p-2 text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border">
-            <div className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-lg font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <Button asChild className="w-full mt-2 bg-primary text-primary-foreground">
-                <Link href="tel:+254725297393">Book Now</Link>
-              </Button>
+      {/* Mobile Menu */}
+      <div
+        className={`lg:hidden absolute top-full left-0 right-0 bg-background/98 backdrop-blur-lg border-t border-border transition-all duration-300 ${
+          isMobileMenuOpen
+            ? "opacity-100 visible translate-y-0"
+            : "opacity-0 invisible -translate-y-4"
+        }`}
+      >
+        <nav className="flex flex-col px-4 py-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center py-3 text-lg font-medium text-foreground border-b border-border/50 transition-colors hover:text-amber-400"
+            >
+              {link.name}
+            </Link>
+          ))}
+          <div className="mt-6 flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 text-amber-400" />
+              <span>Nyeri, Kenya</span>
             </div>
+            <a
+              href="tel:+254725297393"
+              className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-5 py-3 text-sm font-semibold text-background"
+            >
+              <Phone className="h-4 w-4" />
+              <span>+254 725 297393</span>
+            </a>
           </div>
-        )}
-      </nav>
+        </nav>
+      </div>
     </header>
-  )
+  );
 }

@@ -1,94 +1,155 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Play } from "lucide-react"
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { Play, Pause, Volume2, VolumeX, ChevronDown, Award, Users, Camera, Star } from "lucide-react";
+
+const stats = [
+  { icon: Camera, value: "5000+", label: "Photos Taken" },
+  { icon: Users, value: "500+", label: "Happy Clients" },
+  { icon: Award, value: "10+", label: "Years Experience" },
+  { icon: Star, value: "4.9", label: "Client Rating" },
+];
 
 export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  }, []);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Video Background */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/hero-wedding.jpg"
-          alt="Wedding photography by BMA Studio"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-background/80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+          poster="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&q=80"
+        >
+          <source
+            src="https://assets.mixkit.co/videos/preview/mixkit-photographer-taking-pictures-in-a-studio-34421-large.mp4"
+            type="video/mp4"
+          />
+        </video>
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80" />
+      </div>
+
+      {/* Video Controls */}
+      <div className="absolute bottom-32 right-6 z-20 flex flex-col gap-2">
+        <button
+          onClick={togglePlay}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400 hover:text-background"
+          aria-label={isPlaying ? "Pause video" : "Play video"}
+        >
+          {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+        </button>
+        <button
+          onClick={toggleMute}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400 hover:text-background"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+        </button>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 lg:px-8 pt-20">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/10 mb-8">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm text-primary font-medium tracking-wide">Nyeri, Kenya</span>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="font-[family-name:var(--font-heading)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6 tracking-tight text-balance">
-            <span className="text-primary">Capturing</span> Your
-            <br />
-            Perfect Moments
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed text-pretty">
-            Professional photography services that transform your precious moments into timeless memories. From weddings to portraits, we bring your vision to life.
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+        <div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: "forwards" }}>
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
+            Welcome to BMA Photography Studio
           </p>
+        </div>
+        
+        <h1 
+          className="opacity-0 animate-fade-in-up delay-200 mb-6 font-[var(--font-heading)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight"
+          style={{ animationFillMode: "forwards" }}
+        >
+          <span className="text-foreground">Capturing Your</span>
+          <br />
+          <span className="gradient-text">Precious Moments</span>
+        </h1>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 group"
-            >
-              <Link href="#contact">
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-6 border-border hover:bg-secondary group"
-            >
-              <Link href="#gallery">
-                <Play className="mr-2 h-5 w-5 text-primary" />
-                View Portfolio
-              </Link>
-            </Button>
-          </div>
+        <p 
+          className="opacity-0 animate-fade-in-up delay-300 mx-auto mb-10 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed"
+          style={{ animationFillMode: "forwards" }}
+        >
+          Professional photography services in Nyeri, Kenya. From weddings to portraits, 
+          we transform your special moments into timeless memories with artistic excellence.
+        </p>
 
-          {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
-            {[
-              { value: "500+", label: "Weddings" },
-              { value: "1000+", label: "Portraits" },
-              { value: "10+", label: "Years" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="font-[family-name:var(--font-heading)] text-3xl md:text-4xl font-bold text-primary">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+        <div 
+          className="opacity-0 animate-fade-in-up delay-400 flex flex-col sm:flex-row items-center justify-center gap-4"
+          style={{ animationFillMode: "forwards" }}
+        >
+          <a
+            href="#services"
+            className="group relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-8 py-4 text-sm font-semibold text-background transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
+          >
+            <span>Explore Our Services</span>
+            <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
+          </a>
+          <a
+            href="#portfolio"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-amber-400/50 px-8 py-4 text-sm font-semibold text-foreground transition-all duration-300 hover:border-amber-400 hover:bg-amber-400/10"
+          >
+            View Portfolio
+          </a>
+        </div>
+
+        {/* Stats */}
+        <div 
+          className="opacity-0 animate-fade-in-up delay-500 mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12"
+          style={{ animationFillMode: "forwards" }}
+        >
+          {stats.map((stat, index) => (
+            <div key={index} className="group text-center">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/50 transition-all duration-300 group-hover:bg-amber-400/20 group-hover:scale-110">
+                <stat.icon className="h-6 w-6 text-amber-400" />
               </div>
-            ))}
-          </div>
+              <p className="font-[var(--font-heading)] text-2xl sm:text-3xl font-bold text-foreground">
+                {stat.value}
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="w-6 h-10 rounded-full border-2 border-primary/50 flex items-start justify-center p-2">
-          <div className="w-1 h-2 bg-primary rounded-full animate-bounce" />
-        </div>
+        <a href="#services" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-amber-400 transition-colors">
+          <span className="text-xs uppercase tracking-widest">Scroll</span>
+          <ChevronDown className="h-5 w-5 animate-bounce" />
+        </a>
       </div>
     </section>
-  )
+  );
 }
