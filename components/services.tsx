@@ -2,56 +2,56 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Heart, User, Sparkles, Image as ImageIcon, Palette, Settings, GraduationCap, ArrowRight } from "lucide-react";
+import { Heart, User, Sparkles, Image as ImageIcon, Palette, GraduationCap, ArrowRight } from "lucide-react";
 
 const services = [
   {
     icon: Heart,
     title: "Wedding Photography",
-    description: "Capture the magic of your special day with our professional wedding photography services. Full day coverage, multiple photographers, and cinematic storytelling.",
+    subtitle: "Capture your special day",
     price: "From KSH 45,000",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
-    features: ["Full Day Coverage", "2 Photographers", "Edited Photos", "Wedding Album"],
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+    orientation: "portrait",
   },
   {
     icon: User,
     title: "Studio Portraits",
-    description: "Professional studio portraits for individuals, families, and corporate headshots. State-of-the-art lighting and backdrops for perfect results.",
+    subtitle: "Professional headshots & family",
     price: "From KSH 3,500",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80",
-    features: ["Professional Lighting", "Multiple Backdrops", "Retouching", "Digital Copies"],
+    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80",
+    orientation: "landscape",
   },
   {
     icon: Sparkles,
     title: "Creative Photoshoots",
-    description: "Fashion, lifestyle, and creative photoshoots tailored to your vision. Indoor and outdoor locations with artistic direction.",
+    subtitle: "Fashion & lifestyle sessions",
     price: "From KSH 8,000",
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
-    features: ["Creative Direction", "Location Scouting", "Wardrobe Advice", "High-Res Images"],
+    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80",
+    orientation: "portrait",
   },
   {
     icon: ImageIcon,
     title: "Photo Mounting",
-    description: "Premium photo mounting and framing services. Canvas prints, acrylic mounts, and custom frames to showcase your memories.",
+    subtitle: "Canvas, acrylic & frames",
     price: "From KSH 1,500",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=800&q=80",
-    features: ["Canvas Prints", "Acrylic Mounts", "Custom Frames", "Wall Galleries"],
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80",
+    orientation: "landscape",
   },
   {
     icon: Palette,
     title: "Graphic Design",
-    description: "Professional graphic design services including logos, branding, marketing materials, and social media graphics.",
+    subtitle: "Logos, branding & prints",
     price: "From KSH 2,500",
-    image: "https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=800&q=80",
-    features: ["Logo Design", "Brand Identity", "Print Materials", "Social Media"],
+    image: "https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=600&q=80",
+    orientation: "landscape",
   },
   {
     icon: GraduationCap,
     title: "Editing Training",
-    description: "Learn professional photo and video editing. One-on-one training in Lightroom, Photoshop, and Premiere Pro.",
+    subtitle: "Lightroom & Photoshop courses",
     price: "From KSH 15,000",
-    image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80",
-    features: ["Lightroom Mastery", "Photoshop Skills", "Video Editing", "Certificate"],
+    image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80",
+    orientation: "portrait",
   },
 ];
 
@@ -69,7 +69,7 @@ export function Services() {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
 
     const items = document.querySelectorAll("[data-service-item]");
@@ -79,92 +79,82 @@ export function Services() {
   }, []);
 
   return (
-    <section id="services" ref={sectionRef} className="relative py-24 lg:py-32 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="services" ref={sectionRef} className="relative py-12 md:py-20 overflow-hidden">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         {/* Section Header */}
-        <div className="text-center mb-16 lg:mb-24">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
+        <div className="text-center mb-8 md:mb-12">
+          <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
             What We Offer
           </p>
-          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Our <span className="gradient-text">Services</span>
+          <h2 className="font-[var(--font-heading)] text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+            Our Services
           </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground">
-            Comprehensive photography and creative services tailored to capture your vision 
-            with artistic excellence and professional quality.
-          </p>
         </div>
 
-        {/* Services Grid - Alternating Layout */}
-        <div className="space-y-16 lg:space-y-24">
+        {/* Services Grid - Mixed Layout */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {services.map((service, index) => (
             <div
               key={index}
               data-service-item
               data-index={index}
-              className={`flex flex-col gap-8 lg:gap-16 ${
-                index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
-              } ${visibleItems.includes(index) ? "opacity-100" : "opacity-0"} transition-all duration-700`}
+              className={`group relative overflow-hidden rounded-xl md:rounded-2xl cursor-pointer ${
+                service.orientation === "portrait" 
+                  ? "row-span-2" 
+                  : ""
+              } ${visibleItems.includes(index) ? "opacity-100" : "opacity-0"} transition-all duration-500`}
               style={{
-                transform: visibleItems.includes(index) ? "translateY(0)" : "translateY(50px)",
+                transform: visibleItems.includes(index) ? "translateY(0)" : "translateY(20px)",
               }}
             >
-              {/* Image */}
-              <div className="flex-1 relative group">
-                <div className="relative aspect-[4/3] lg:aspect-[3/2] overflow-hidden rounded-3xl">
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+              {/* Image Container */}
+              <div className={`relative w-full ${
+                service.orientation === "portrait" 
+                  ? "aspect-[3/4] md:aspect-[2/3]" 
+                  : "aspect-[4/3] md:aspect-[3/2]"
+              }`}>
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
+                
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
+                  {/* Icon */}
+                  <service.icon className="h-4 w-4 md:h-5 md:w-5 text-amber-400 mb-1 md:mb-2 stroke-[1.5]" />
                   
-                  {/* Price Tag */}
-                  <div className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-4 py-2 text-sm font-bold text-background shadow-lg">
-                    {service.price}
-                  </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 flex flex-col justify-center">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400/20 to-amber-600/20">
-                    <service.icon className="h-7 w-7 text-amber-400" />
-                  </div>
-                  <h3 className="font-[var(--font-heading)] text-2xl lg:text-3xl font-bold text-foreground">
+                  {/* Title */}
+                  <h3 className="font-[var(--font-heading)] text-xs md:text-sm lg:text-base font-semibold text-white leading-tight">
                     {service.title}
                   </h3>
+                  
+                  {/* Subtitle */}
+                  <p className="text-[9px] md:text-[10px] lg:text-xs text-white/70 mt-0.5">
+                    {service.subtitle}
+                  </p>
+                  
+                  {/* Price & CTA - Hidden by default, shown on hover */}
+                  <div className="flex items-center justify-between mt-2 md:mt-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <span className="text-[9px] md:text-[10px] font-medium text-amber-400">
+                      {service.price}
+                    </span>
+                    <a
+                      href={`https://wa.me/254725297393?text=Hi, I'm interested in ${service.title}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-[9px] md:text-[10px] text-white hover:text-amber-400 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span>Book</span>
+                      <ArrowRight className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                    </a>
+                  </div>
                 </div>
-
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  {service.description}
-                </p>
-
-                {/* Features */}
-                <div className="grid grid-cols-2 gap-3 mb-8">
-                  {service.features.map((feature, fIndex) => (
-                    <div key={fIndex} className="flex items-center gap-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                      <span className="text-sm text-foreground/80">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <a
-                  href={`https://wa.me/254725297393?text=Hi, I'm interested in your ${service.title} service.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 text-amber-400 font-medium transition-colors hover:text-amber-300"
-                >
-                  <span>Book This Service</span>
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
-                </a>
               </div>
             </div>
           ))}
