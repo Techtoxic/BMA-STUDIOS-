@@ -5,7 +5,7 @@ import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
 const categories = [
-  { id: "all", label: "All" },
+  { id: "all", label: "All Work" },
   { id: "wedding", label: "Weddings" },
   { id: "portrait", label: "Portraits" },
   { id: "fashion", label: "Fashion" },
@@ -13,18 +13,90 @@ const categories = [
 ];
 
 const portfolioItems = [
-  { id: 1, category: "wedding", image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80", title: "Sarah & James Wedding", orientation: "landscape" },
-  { id: 2, category: "portrait", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80", title: "Portrait Session", orientation: "portrait" },
-  { id: 3, category: "fashion", image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80", title: "Fashion Editorial", orientation: "portrait" },
-  { id: 4, category: "wedding", image: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80", title: "Beach Wedding", orientation: "landscape" },
-  { id: 5, category: "events", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", title: "Corporate Event", orientation: "landscape" },
-  { id: 6, category: "portrait", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80", title: "Studio Portrait", orientation: "portrait" },
-  { id: 7, category: "fashion", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80", title: "Outdoor Fashion", orientation: "landscape" },
-  { id: 8, category: "wedding", image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80", title: "Traditional Wedding", orientation: "portrait" },
-  { id: 9, category: "events", image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80", title: "Birthday Celebration", orientation: "landscape" },
-  { id: 10, category: "portrait", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80", title: "Professional Headshot", orientation: "portrait" },
-  { id: 11, category: "fashion", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80", title: "Street Fashion", orientation: "portrait" },
-  { id: 12, category: "wedding", image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80", title: "Garden Wedding", orientation: "landscape" },
+  {
+    id: 1,
+    category: "wedding",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+    title: "Sarah & James Wedding",
+    orientation: "landscape",
+  },
+  {
+    id: 2,
+    category: "portrait",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
+    title: "Portrait Session",
+    orientation: "portrait",
+  },
+  {
+    id: 3,
+    category: "fashion",
+    image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80",
+    title: "Fashion Editorial",
+    orientation: "portrait",
+  },
+  {
+    id: 4,
+    category: "wedding",
+    image: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80",
+    title: "Beach Wedding",
+    orientation: "landscape",
+  },
+  {
+    id: 5,
+    category: "events",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
+    title: "Corporate Event",
+    orientation: "landscape",
+  },
+  {
+    id: 6,
+    category: "portrait",
+    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80",
+    title: "Studio Portrait",
+    orientation: "portrait",
+  },
+  {
+    id: 7,
+    category: "fashion",
+    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
+    title: "Outdoor Fashion",
+    orientation: "landscape",
+  },
+  {
+    id: 8,
+    category: "wedding",
+    image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80",
+    title: "Traditional Wedding",
+    orientation: "portrait",
+  },
+  {
+    id: 9,
+    category: "events",
+    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80",
+    title: "Birthday Celebration",
+    orientation: "landscape",
+  },
+  {
+    id: 10,
+    category: "portrait",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+    title: "Professional Headshot",
+    orientation: "portrait",
+  },
+  {
+    id: 11,
+    category: "fashion",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80",
+    title: "Street Fashion",
+    orientation: "portrait",
+  },
+  {
+    id: 12,
+    category: "wedding",
+    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80",
+    title: "Garden Wedding",
+    orientation: "landscape",
+  },
 ];
 
 export function Portfolio() {
@@ -43,7 +115,7 @@ export function Portfolio() {
       filteredItems.forEach((_, index) => {
         setTimeout(() => {
           setVisibleItems(prev => [...prev, index]);
-        }, index * 80);
+        }, index * 100);
       });
     }, 100);
     return () => clearTimeout(timer);
@@ -62,28 +134,28 @@ export function Portfolio() {
   };
 
   return (
-    <section id="portfolio" className="relative py-12 md:py-20 lg:py-28 bg-secondary/30">
+    <section id="portfolio" className="relative py-24 lg:py-32 bg-secondary/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <p className="mb-2 md:mb-3 text-xs md:text-sm font-medium uppercase tracking-[0.2em] md:tracking-[0.3em] text-amber-400">
+        <div className="text-center mb-12 lg:mb-16">
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
             Our Work
           </p>
-          <h2 className="font-[var(--font-heading)] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
+          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Portfolio <span className="gradient-text">Gallery</span>
           </h2>
-          <p className="mx-auto max-w-xl text-xs md:text-sm text-muted-foreground">
-            Browse our collection of memorable moments captured with passion.
+          <p className="mx-auto max-w-2xl text-muted-foreground">
+            Browse through our collection of memorable moments captured with passion and precision.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-8 md:mb-10">
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-medium transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                 activeCategory === category.id
                   ? "bg-gradient-to-r from-amber-400 to-amber-600 text-background shadow-lg shadow-amber-500/30"
                   : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
@@ -97,12 +169,12 @@ export function Portfolio() {
         {/* Masonry Grid */}
         <div 
           ref={gridRef}
-          className="columns-2 md:columns-3 gap-2 md:gap-3 lg:gap-4 space-y-2 md:space-y-3 lg:space-y-4"
+          className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
         >
           {filteredItems.map((item, index) => (
             <div
               key={item.id}
-              className={`break-inside-avoid group relative overflow-hidden rounded-xl md:rounded-2xl cursor-pointer transition-all duration-500 ${
+              className={`break-inside-avoid group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 ${
                 visibleItems.includes(index) 
                   ? "opacity-100 translate-y-0" 
                   : "opacity-0 translate-y-8"
@@ -120,13 +192,13 @@ export function Portfolio() {
                 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-amber-400 text-background mb-2 md:mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
-                    <ZoomIn className="h-4 w-4 md:h-5 md:w-5" />
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-400 text-background mb-4 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
+                    <ZoomIn className="h-6 w-6" />
                   </div>
-                  <p className="text-foreground font-medium text-xs md:text-sm text-center px-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-150">
+                  <p className="text-foreground font-medium text-center px-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-150">
                     {item.title}
                   </p>
-                  <p className="text-amber-400 text-[10px] md:text-xs capitalize transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
+                  <p className="text-amber-400 text-sm capitalize transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
                     {item.category}
                   </p>
                 </div>
@@ -144,30 +216,30 @@ export function Portfolio() {
         >
           <button
             onClick={() => setLightboxImage(null)}
-            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
+            className="absolute top-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
             aria-label="Close lightbox"
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </button>
 
           <button
             onClick={(e) => { e.stopPropagation(); navigateLightbox("prev"); }}
-            className="absolute left-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
+            className="absolute left-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
             aria-label="Previous image"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
 
           <button
             onClick={(e) => { e.stopPropagation(); navigateLightbox("next"); }}
-            className="absolute right-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
+            className="absolute right-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
             aria-label="Next image"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-6 w-6" />
           </button>
 
           <div 
-            className="relative max-w-4xl max-h-[80vh] w-full"
+            className="relative max-w-5xl max-h-[85vh] w-full"
             onClick={(e) => e.stopPropagation()}
           >
             {(() => {
@@ -179,7 +251,7 @@ export function Portfolio() {
                     src={item.image}
                     alt={item.title}
                     fill
-                    className="object-contain rounded-xl md:rounded-2xl"
+                    className="object-contain rounded-2xl"
                   />
                 </div>
               );

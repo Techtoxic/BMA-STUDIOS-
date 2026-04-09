@@ -1,7 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, Phone, Mail, MapPin, Instagram, Facebook, Twitter, ArrowUp } from "lucide-react";
+import { Camera, Phone, Mail, MapPin, Instagram, Facebook, Twitter, Youtube, ArrowUp, Heart } from "lucide-react";
+
+const services = [
+  { name: "Wedding Photography", price: "From KSH 45,000" },
+  { name: "Studio Portraits", price: "From KSH 3,500" },
+  { name: "Creative Photoshoots", price: "From KSH 8,000" },
+  { name: "Photo Mounting", price: "From KSH 1,500" },
+  { name: "Graphic Design", price: "From KSH 2,500" },
+  { name: "Editing Training", price: "From KSH 15,000" },
+];
 
 const quickLinks = [
   { name: "Home", href: "#home" },
@@ -12,19 +21,11 @@ const quickLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-const services = [
-  "Weddings",
-  "Portraits",
-  "Photoshoots",
-  "Mounting",
-  "Graphic Design",
-  "Training",
-];
-
 const socialLinks = [
   { icon: Instagram, href: "#", label: "Instagram" },
   { icon: Facebook, href: "#", label: "Facebook" },
   { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Youtube, href: "#", label: "YouTube" },
 ];
 
 export function Footer() {
@@ -33,103 +34,163 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative bg-secondary/50 border-t border-border">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        {/* Main Footer Row */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 lg:gap-8 pb-6 md:pb-8 border-b border-border">
-          {/* Brand */}
-          <Link href="#home" className="flex items-center gap-2 group shrink-0">
-            <div className="flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 transition-transform duration-300 group-hover:scale-110">
-              <Camera className="h-4 w-4 md:h-5 md:w-5 text-background" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[var(--font-heading)] text-base md:text-lg font-bold tracking-wider text-foreground">BMA</span>
-              <span className="text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-amber-400">Photography</span>
-            </div>
-          </Link>
+    <footer className="relative bg-secondary/50 border-t border-border overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl" />
 
-          {/* Quick Links - Horizontal with Dividers */}
-          <nav className="flex flex-wrap items-center gap-1 text-xs md:text-sm">
-            {quickLinks.map((link, index) => (
-              <span key={link.name} className="flex items-center">
-                <Link
-                  href={link.href}
-                  className="text-muted-foreground hover:text-amber-400 transition-colors px-2 py-1"
-                >
-                  {link.name}
-                </Link>
-                {index < quickLinks.length - 1 && (
-                  <span className="text-border">|</span>
-                )}
-              </span>
-            ))}
-          </nav>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Main Footer */}
+        <div className="py-16 lg:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+            {/* Brand */}
+            <div className="lg:col-span-1">
+              <Link href="#home" className="flex items-center gap-3 mb-6 group">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 transition-transform duration-300 group-hover:scale-110">
+                  <Camera className="h-6 w-6 text-background" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-[var(--font-heading)] text-xl font-bold tracking-wider text-foreground">
+                    BMA
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-amber-400">
+                    Photography
+                  </span>
+                </div>
+              </Link>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                Professional photography services in Nyeri, Kenya. Capturing life&apos;s most 
+                precious moments with artistic excellence since 2014.
+              </p>
+              
+              {/* Social Links */}
+              <div className="flex gap-3">
+                {socialLinks.map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.href}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-background/50 text-muted-foreground transition-all duration-300 hover:bg-amber-400 hover:text-background hover:scale-110"
+                    aria-label={social.label}
+                  >
+                    <social.icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-2">
-            {socialLinks.map((social) => (
+            {/* Services */}
+            <div>
+              <h4 className="font-[var(--font-heading)] font-semibold text-foreground mb-6 text-lg">
+                Our Services
+              </h4>
+              <ul className="space-y-3">
+                {services.map((service, index) => (
+                  <li key={index}>
+                    <a
+                      href="#services"
+                      className="group flex items-center justify-between text-sm text-muted-foreground transition-colors hover:text-amber-400"
+                    >
+                      <span>{service.name}</span>
+                      <span className="text-xs opacity-60 group-hover:opacity-100">{service.price}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-[var(--font-heading)] font-semibold text-foreground mb-6 text-lg">
+                Quick Links
+              </h4>
+              <ul className="space-y-3">
+                {quickLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground transition-colors hover:text-amber-400 flex items-center gap-2 group"
+                    >
+                      <span className="h-1 w-1 rounded-full bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 className="font-[var(--font-heading)] font-semibold text-foreground mb-6 text-lg">
+                Contact Us
+              </h4>
+              <ul className="space-y-4">
+                <li>
+                  <a
+                    href="tel:+254725297393"
+                    className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-amber-400 group"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-background/50 transition-colors group-hover:bg-amber-400/20">
+                      <Phone className="h-4 w-4 text-amber-400" />
+                    </div>
+                    +254 725 297393
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="mailto:info@bmaphotography.co.ke"
+                    className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-amber-400 group"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-background/50 transition-colors group-hover:bg-amber-400/20">
+                      <Mail className="h-4 w-4 text-amber-400" />
+                    </div>
+                    info@bmaphotography.co.ke
+                  </a>
+                </li>
+                <li>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-background/50">
+                      <MapPin className="h-4 w-4 text-amber-400" />
+                    </div>
+                    Nyeri Town, Kenya
+                  </div>
+                </li>
+              </ul>
+
+              {/* CTA */}
               <a
-                key={social.label}
-                href={social.href}
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-background/50 text-muted-foreground transition-all duration-300 hover:bg-amber-400 hover:text-background"
-                aria-label={social.label}
+                href="https://wa.me/254725297393"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-5 py-2.5 text-sm font-semibold text-background transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30"
               >
-                <social.icon className="h-3.5 w-3.5" />
+                <span>Chat on WhatsApp</span>
               </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Info Row */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-6 md:pt-8">
-          {/* Contact Info - Horizontal */}
-          <div className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-            <a href="tel:+254725297393" className="flex items-center gap-1.5 hover:text-amber-400 transition-colors px-2 py-1">
-              <Phone className="h-3 w-3 text-amber-400" />
-              <span>+254 725 297393</span>
-            </a>
-            <span className="text-border">|</span>
-            <a href="mailto:info@bmaphotography.co.ke" className="flex items-center gap-1.5 hover:text-amber-400 transition-colors px-2 py-1">
-              <Mail className="h-3 w-3 text-amber-400" />
-              <span>info@bmaphotography.co.ke</span>
-            </a>
-            <span className="text-border">|</span>
-            <span className="flex items-center gap-1.5 px-2 py-1">
-              <MapPin className="h-3 w-3 text-amber-400" />
-              <span>Nyeri Town, Kenya</span>
-            </span>
-          </div>
-
-          {/* Services - Horizontal */}
-          <div className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-            <span className="text-foreground/70 mr-1">Services:</span>
-            {services.map((service, index) => (
-              <span key={service} className="flex items-center">
-                <span className="px-1">{service}</span>
-                {index < services.length - 1 && (
-                  <span className="text-border">|</span>
-                )}
-              </span>
-            ))}
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-6 border-t border-border">
-          <p className="text-[10px] md:text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} BMA Photography Studio. All rights reserved.
-          </p>
-          
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-1.5 text-[10px] md:text-xs text-muted-foreground transition-colors hover:text-amber-400 group"
-            aria-label="Back to top"
-          >
-            <span>Back to Top</span>
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-background/50 transition-all group-hover:bg-amber-400 group-hover:text-background">
-              <ArrowUp className="h-3 w-3" />
-            </div>
-          </button>
+        <div className="border-t border-border py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <span>&copy; {new Date().getFullYear()} BMA Photography Studio.</span>
+              <span className="hidden sm:inline">Made with</span>
+              <Heart className="h-3 w-3 text-amber-400 hidden sm:inline" />
+              <span className="hidden sm:inline">in Nyeri, Kenya</span>
+            </p>
+            
+            {/* Back to Top */}
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-400 group"
+              aria-label="Back to top"
+            >
+              <span>Back to Top</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-background/50 transition-all group-hover:bg-amber-400 group-hover:text-background">
+                <ArrowUp className="h-4 w-4" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </footer>
