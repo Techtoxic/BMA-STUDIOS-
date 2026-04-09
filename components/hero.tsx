@@ -88,144 +88,164 @@ export function Hero() {
         </video>
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/40" />
       </div>
 
       {/* Video Controls - Top Right */}
       <div className="absolute top-24 right-4 sm:right-6 z-20 flex gap-2">
         <button
           onClick={togglePlay}
-          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400 hover:text-background"
+          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400/20 hover:text-amber-400"
           aria-label={isPlaying ? "Pause video" : "Play video"}
         >
           {isPlaying ? <Pause className="h-3 w-3 sm:h-4 sm:w-4" /> : <Play className="h-3 w-3 sm:h-4 sm:w-4" />}
         </button>
         <button
           onClick={toggleMute}
-          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400 hover:text-background"
+          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400/20 hover:text-amber-400"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
           {isMuted ? <VolumeX className="h-3 w-3 sm:h-4 sm:w-4" /> : <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />}
         </button>
       </div>
 
-      {/* Main Content - Center */}
-      <div className="relative z-10 flex-1 flex items-center justify-center">
+      {/* Main Content - Left Aligned, Distributed */}
+      <div className="relative z-10 flex-1 flex items-center">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="opacity-0 animate-slide-in-left" style={{ animationFillMode: "forwards" }}>
-              <p className="mb-3 sm:mb-4 text-xs sm:text-sm font-medium uppercase tracking-[0.2em] sm:tracking-[0.3em] text-amber-400">
-                BMA Photography Studio
-              </p>
-            </div>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
-            <h1 
-              className="opacity-0 animate-slide-in-left delay-200 mb-4 sm:mb-6 font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]"
-              style={{ animationFillMode: "forwards" }}
-            >
-              <span className="text-foreground block">Capturing Your</span>
-              <span className="gradient-text block">Precious Moments</span>
-            </h1>
+            {/* Left Side - Main Headline */}
+            <div className="lg:flex-1 lg:max-w-2xl">
+              <h1 
+                className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 sm:mb-6"
+                style={{ animationFillMode: "forwards" }}
+              >
+                <span className="text-foreground">Capturing Your</span>
+                <br />
+                <span className="gradient-text">Precious Moments</span>
+              </h1>
 
-            {/* Typing Effect */}
-            <div 
-              className="opacity-0 animate-slide-in-left delay-300 mb-6 sm:mb-8 h-8 sm:h-10 flex items-center justify-center"
-              style={{ animationFillMode: "forwards" }}
-            >
-              <span className="text-sm sm:text-base md:text-lg text-muted-foreground">We specialize in </span>
-              <span className="text-sm sm:text-base md:text-lg text-amber-400 font-semibold ml-1 sm:ml-2">
-                {displayText}
-                <span className="animate-pulse">|</span>
-              </span>
+              {/* Typing Effect */}
+              <div 
+                className="opacity-0 animate-slide-in-left delay-200 mb-4 sm:mb-6 flex items-center flex-wrap"
+                style={{ animationFillMode: "forwards" }}
+              >
+                <span className="text-xs sm:text-sm md:text-base text-muted-foreground">We specialize in</span>
+                <span className="text-xs sm:text-sm md:text-base text-amber-400 font-semibold ml-1.5">
+                  {displayText}
+                  <span className="animate-pulse">|</span>
+                </span>
+              </div>
+
+              <p 
+                className="opacity-0 animate-slide-in-left delay-300 mb-6 sm:mb-8 max-w-md text-xs sm:text-sm text-muted-foreground leading-relaxed"
+                style={{ animationFillMode: "forwards" }}
+              >
+                Professional photography services in Nyeri, Kenya. Transform your special 
+                moments into timeless memories with artistic excellence.
+              </p>
+
+              {/* CTA Buttons - Toned Down */}
+              <div 
+                className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-3"
+                style={{ animationFillMode: "forwards" }}
+              >
+                <a
+                  href="#services"
+                  className="inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-400/10 px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-amber-400 transition-all duration-300 hover:bg-amber-400/20 hover:border-amber-400"
+                >
+                  <span>Explore Services</span>
+                  <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                </a>
+                <a
+                  href="tel:+254725297393"
+                  className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-foreground transition-all duration-300 hover:border-foreground/40 hover:bg-foreground/5"
+                >
+                  <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>Call Now</span>
+                </a>
+              </div>
             </div>
 
-            <p 
-              className="opacity-0 animate-slide-in-left delay-400 mb-8 sm:mb-10 max-w-lg mx-auto text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed"
-              style={{ animationFillMode: "forwards" }}
-            >
-              Professional photography services in Nyeri, Kenya. Transform your special 
-              moments into timeless memories with artistic excellence and creativity.
-            </p>
-
+            {/* Right Side - Description Card */}
             <div 
-              className="opacity-0 animate-slide-in-left delay-500 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+              className="hidden lg:block lg:flex-1 lg:max-w-sm opacity-0 animate-slide-in-right delay-500"
               style={{ animationFillMode: "forwards" }}
             >
-              <a
-                href="#services"
-                className="group relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-background transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-105"
-              >
-                <span>Explore Services</span>
-                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-y-1" />
-              </a>
-              <a
-                href="tel:+254725297393"
-                className="inline-flex items-center gap-2 rounded-full border-2 border-amber-400/50 px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-foreground transition-all duration-300 hover:border-amber-400 hover:bg-amber-400/10"
-              >
-                <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Call Now</span>
-              </a>
+              <div className="border-l-2 border-amber-400/30 pl-6">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  From wedding celebrations to professional portraits, we bring your vision to life with expert craftsmanship.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="h-1 w-1 rounded-full bg-amber-400"></span>
+                  <span>Est. 2014</span>
+                  <span className="h-1 w-1 rounded-full bg-amber-400"></span>
+                  <span>Nyeri, Kenya</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Section - Location Left, Stats Right */}
-      <div className="relative z-10 pb-16 sm:pb-20 lg:pb-24">
+      {/* Bottom Section - Stats Left, Studio Name Right */}
+      <div className="relative z-10 pb-6 sm:pb-8">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-8">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6">
             
-            {/* Left - Location Info */}
+            {/* Left - Stats (No Cards, Small Font) */}
             <div 
               className="opacity-0 animate-fade-in delay-600"
               style={{ animationFillMode: "forwards" }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <Camera className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
-                <span className="text-xs sm:text-sm font-semibold text-foreground">BMA Photography Studio</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-amber-400" />
-                  <span className="text-xs sm:text-sm">Nyeri Town, Kenya</span>
+              <div className="flex items-center gap-3 sm:gap-4 text-xs">
+                <div>
+                  <span className="font-semibold text-amber-400">5000+</span>
+                  <span className="text-muted-foreground ml-1">Photos</span>
                 </div>
-                <span className="hidden sm:inline text-muted-foreground/50">|</span>
-                <div className="flex items-center gap-1.5">
-                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-amber-400" />
-                  <span className="text-xs sm:text-sm">+254 725 297393</span>
+                <span className="text-muted-foreground/40">|</span>
+                <div>
+                  <span className="font-semibold text-amber-400">500+</span>
+                  <span className="text-muted-foreground ml-1">Clients</span>
                 </div>
-                <span className="hidden sm:inline text-muted-foreground/50">|</span>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-amber-400" />
-                  <span className="text-xs sm:text-sm">Mon - Sat: 8AM - 6PM</span>
+                <span className="text-muted-foreground/40">|</span>
+                <div>
+                  <span className="font-semibold text-amber-400">10+</span>
+                  <span className="text-muted-foreground ml-1">Years</span>
+                </div>
+                <span className="text-muted-foreground/40">|</span>
+                <div>
+                  <span className="font-semibold text-amber-400">4.9</span>
+                  <span className="text-muted-foreground ml-1">Rating</span>
                 </div>
               </div>
             </div>
 
-            {/* Right - Stats (No Cards) */}
+            {/* Right - Studio Name & Location */}
             <div 
               className="opacity-0 animate-fade-in delay-700"
               style={{ animationFillMode: "forwards" }}
             >
-              <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
-                <div className="text-center lg:text-right">
-                  <p className="font-[var(--font-heading)] text-xl sm:text-2xl font-bold text-amber-400">5000+</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Photos</p>
+              <div className="flex flex-col sm:items-end gap-1">
+                <div className="flex items-center gap-1.5 text-xs text-foreground">
+                  <Camera className="h-3 w-3 text-amber-400" />
+                  <span className="font-medium">BMA Photography Studio</span>
                 </div>
-                <span className="text-muted-foreground/30">|</span>
-                <div className="text-center lg:text-right">
-                  <p className="font-[var(--font-heading)] text-xl sm:text-2xl font-bold text-amber-400">500+</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Clients</p>
-                </div>
-                <span className="text-muted-foreground/30">|</span>
-                <div className="text-center lg:text-right">
-                  <p className="font-[var(--font-heading)] text-xl sm:text-2xl font-bold text-amber-400">10+</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Years</p>
-                </div>
-                <span className="text-muted-foreground/30">|</span>
-                <div className="text-center lg:text-right">
-                  <p className="font-[var(--font-heading)] text-xl sm:text-2xl font-bold text-amber-400">4.9</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Rating</p>
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-2.5 w-2.5 text-amber-400/70" />
+                    <span>Nyeri Town</span>
+                  </div>
+                  <span className="text-muted-foreground/40">|</span>
+                  <div className="flex items-center gap-1">
+                    <Phone className="h-2.5 w-2.5 text-amber-400/70" />
+                    <span>+254 725 297393</span>
+                  </div>
+                  <span className="text-muted-foreground/40">|</span>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-2.5 w-2.5 text-amber-400/70" />
+                    <span>Mon-Sat 8AM-6PM</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -233,11 +253,10 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll Indicator - Bottom Center */}
-      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10">
-        <a href="#services" className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-400 transition-colors">
-          <span className="text-[10px] sm:text-xs uppercase tracking-widest">Scroll</span>
-          <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 animate-bounce" />
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10">
+        <a href="#services" className="flex flex-col items-center gap-0.5 text-muted-foreground/60 hover:text-amber-400 transition-colors">
+          <ChevronDown className="h-4 w-4 animate-bounce" />
         </a>
       </div>
     </section>
