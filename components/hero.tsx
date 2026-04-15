@@ -110,7 +110,7 @@ export function Hero() {
       </div>
 
       {/* Main Content - Left Aligned, Distributed */}
-      <div className="relative z-10 flex-1 flex items-center pt-20 sm:pt-0">
+      <div className="relative z-10 flex-1 flex items-start sm:items-center pt-24 sm:pt-0">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
@@ -189,7 +189,7 @@ export function Hero() {
       </div>
 
       {/* Bottom Section - Stats Left, Studio Name Right */}
-      <div className="relative z-10 mb-8 sm:mb-6">
+      <div className="relative z-10 mb-16 sm:mb-6">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-6">
             
