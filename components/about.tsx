@@ -42,12 +42,12 @@ export function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-24 lg:py-32 overflow-hidden">
+    <section id="about" ref={sectionRef} className="relative py-12 md:py-20 overflow-hidden">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/20 to-background" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Image Side */}
           <div 
             className={`relative transition-all duration-1000 ${
@@ -56,7 +56,7 @@ export function About() {
           >
             {/* Main Image */}
             <div className="relative">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl md:rounded-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80"
                   alt="BMA Photography Studio"
@@ -67,25 +67,25 @@ export function About() {
               </div>
 
               {/* Floating Stats Box */}
-              <div className="absolute -bottom-8 -right-4 lg:-right-8 rounded-2xl bg-background/90 backdrop-blur-sm border border-border p-6 shadow-2xl">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600">
-                    <Award className="h-8 w-8 text-background" />
+              <div className="absolute -bottom-4 md:-bottom-6 -right-2 md:-right-4 rounded-xl md:rounded-2xl bg-background/90 backdrop-blur-sm border border-border p-3 md:p-4 shadow-2xl">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600">
+                    <Award className="h-5 w-5 md:h-6 md:w-6 text-background" />
                   </div>
                   <div>
-                    <p className="font-[var(--font-heading)] text-3xl font-bold text-foreground">10+</p>
-                    <p className="text-sm text-muted-foreground">Years of Excellence</p>
+                    <p className="font-[var(--font-heading)] text-xl md:text-2xl font-bold text-foreground">10+</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground">Years of Excellence</p>
                   </div>
                 </div>
               </div>
 
               {/* Decorative Element */}
-              <div className="absolute -top-6 -left-6 w-32 h-32 rounded-3xl border-2 border-amber-400/30 -z-10" />
-              <div className="absolute -bottom-6 -right-6 w-48 h-48 rounded-full bg-amber-400/10 -z-10 blur-2xl" />
+              <div className="absolute -top-3 -left-3 w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-amber-400/30 -z-10" />
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 md:w-40 md:h-40 rounded-full bg-amber-400/10 -z-10 blur-2xl" />
             </div>
 
             {/* Secondary Image */}
-            <div className="absolute top-8 -left-4 lg:-left-8 w-32 lg:w-40 aspect-square overflow-hidden rounded-2xl border-4 border-background shadow-xl hidden md:block">
+            <div className="absolute top-4 md:top-6 -left-2 md:-left-4 w-20 md:w-28 aspect-square overflow-hidden rounded-xl border-2 md:border-4 border-background shadow-xl hidden md:block">
               <Image
                 src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=80"
                 alt="Camera equipment"
@@ -101,49 +101,49 @@ export function About() {
               isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
             }`}
           >
-            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
+            <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
               About Us
             </p>
-            <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            <h2 className="font-[var(--font-heading)] text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-3 md:mb-4">
               BMA Photography
               <br />
               <span className="gradient-text">Studio</span>
             </h2>
 
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+            <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-3 md:mb-4">
               Located in the heart of Nyeri, Kenya, BMA Photography Studio has been capturing 
               life&apos;s most precious moments for over a decade. Our passion for photography 
               drives us to deliver exceptional quality in every shot.
             </p>
 
-            <p className="text-muted-foreground leading-relaxed mb-8">
+            <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4 md:mb-6">
               From intimate weddings to professional headshots, we bring creativity, technical 
               expertise, and a personal touch to every project. Our fully equipped studio and 
               experienced team ensure that your vision becomes reality.
             </p>
 
             {/* Achievements */}
-            <div className="grid grid-cols-2 gap-3 mb-10">
+            <div className="grid grid-cols-2 gap-2 mb-4 md:mb-6">
               {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
-                  <span className="text-sm text-foreground/80">{achievement}</span>
+                <div key={index} className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400 shrink-0" />
+                  <span className="text-[10px] md:text-xs text-foreground/80">{achievement}</span>
                 </div>
               ))}
             </div>
 
             {/* Features Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
               {features.map((feature, index) => (
                 <div 
                   key={index} 
-                  className="group p-4 rounded-2xl bg-secondary/50 transition-all duration-300 hover:bg-secondary"
+                  className="group p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-secondary/50 transition-all duration-300 hover:bg-secondary"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400/20 to-amber-600/20 mb-3 transition-all duration-300 group-hover:scale-110">
-                    <feature.icon className="h-5 w-5 text-amber-400" />
+                  <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl bg-gradient-to-br from-amber-400/20 to-amber-600/20 mb-2 transition-all duration-300 group-hover:scale-110">
+                    <feature.icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
                   </div>
-                  <h4 className="font-semibold text-foreground text-sm mb-1">{feature.title}</h4>
-                  <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                  <h4 className="font-semibold text-foreground text-[10px] md:text-xs mb-0.5">{feature.title}</h4>
+                  <p className="text-[9px] md:text-[10px] text-muted-foreground">{feature.desc}</p>
                 </div>
               ))}
             </div>

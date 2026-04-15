@@ -26,24 +26,24 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-secondary/50 border-t border-border">
-      <div className="mx-auto max-w-7xl px-4 py-6">
+    <footer className="bg-secondary/50 border-t border-border -mt-4 md:-mt-6">
+      <div className="mx-auto max-w-6xl px-4 py-4 md:py-5">
         {/* Compact Footer - All in one row on desktop, stacked compact on mobile */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 md:gap-4">
           
           {/* Row 1: Logo, Services, Quick Links */}
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[11px] md:text-xs">
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-3 gap-y-2 text-[10px] md:text-[11px]">
             {/* Logo */}
             <Link href="#home" className="flex items-center gap-1.5 text-foreground hover:text-amber-400 transition-colors">
-              <Camera className="h-4 w-4 text-amber-400" />
-              <span className="font-semibold">BMA Photography</span>
+              <Camera className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
+              <span className="font-semibold text-xs md:text-sm">BMA Photography</span>
             </Link>
 
             {/* Divider */}
             <span className="text-border hidden md:inline">|</span>
 
-            {/* Services inline */}
-            <div className="flex items-center gap-1 text-muted-foreground">
+            {/* Services inline - hidden on mobile */}
+            <div className="hidden md:flex items-center gap-1 text-muted-foreground">
               <span className="text-foreground font-medium">Services:</span>
               {services.map((service, index) => (
                 <span key={index} className="flex items-center">
@@ -56,14 +56,22 @@ export function Footer() {
             {/* Divider */}
             <span className="text-border hidden lg:inline">|</span>
 
-            {/* Quick Links inline */}
+            {/* Quick Links inline - show fewer on mobile */}
             <div className="flex items-center gap-1 text-muted-foreground">
-              {quickLinks.map((link, index) => (
+              {quickLinks.slice(0, 4).map((link, index) => (
                 <span key={index} className="flex items-center">
                   <Link href={link.href} className="hover:text-amber-400 transition-colors">{link.name}</Link>
-                  {index < quickLinks.length - 1 && <span className="mx-1 text-border">|</span>}
+                  {index < 3 && <span className="mx-1 text-border">|</span>}
                 </span>
               ))}
+              <span className="hidden md:flex items-center">
+                {quickLinks.slice(4).map((link, index) => (
+                  <span key={index} className="flex items-center">
+                    <span className="mx-1 text-border">|</span>
+                    <Link href={link.href} className="hover:text-amber-400 transition-colors">{link.name}</Link>
+                  </span>
+                ))}
+              </span>
             </div>
           </div>
 
@@ -71,27 +79,27 @@ export function Footer() {
           <div className="border-t border-border" />
 
           {/* Row 2: Contact, Social, Copyright */}
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] md:text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-3 gap-y-2 text-[9px] md:text-[10px] text-muted-foreground">
             {/* Contact Info inline */}
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex items-center gap-1 flex-wrap justify-center">
               <a href="tel:+254725297393" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
-                <Phone className="h-3 w-3 text-amber-400" />
+                <Phone className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
                 <span>+254 725 297393</span>
               </a>
               <span className="text-border">|</span>
               <a href="mailto:info@bmaphotography.co.ke" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
-                <Mail className="h-3 w-3 text-amber-400" />
+                <Mail className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
                 <span>info@bma.co.ke</span>
               </a>
-              <span className="text-border">|</span>
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-amber-400" />
+              <span className="text-border hidden md:inline">|</span>
+              <span className="hidden md:flex items-center gap-1">
+                <MapPin className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
                 <span>Nyeri, Kenya</span>
               </span>
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2">
               {socialLinks.map((social, index) => (
                 <a
                   key={index}
@@ -99,7 +107,7 @@ export function Footer() {
                   className="text-muted-foreground hover:text-amber-400 transition-colors"
                   aria-label={social.label}
                 >
-                  <social.icon className="h-3.5 w-3.5" />
+                  <social.icon className="h-3 w-3 md:h-3.5 md:w-3.5" />
                 </a>
               ))}
               <span className="text-border">|</span>
@@ -115,7 +123,7 @@ export function Footer() {
 
             {/* Copyright & Back to Top */}
             <div className="flex items-center gap-2">
-              <span>&copy; {new Date().getFullYear()} BMA Photography</span>
+              <span>&copy; {new Date().getFullYear()} BMA</span>
               <span className="text-border">|</span>
               <button
                 onClick={scrollToTop}
@@ -123,7 +131,7 @@ export function Footer() {
                 aria-label="Back to top"
               >
                 <span>Top</span>
-                <ArrowUp className="h-3 w-3" />
+                <ArrowUp className="h-2.5 w-2.5 md:h-3 md:w-3" />
               </button>
             </div>
           </div>

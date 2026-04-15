@@ -134,28 +134,28 @@ export function Portfolio() {
   };
 
   return (
-    <section id="portfolio" className="relative py-24 lg:py-32 bg-secondary/30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="portfolio" className="relative py-12 md:py-20 bg-secondary/30">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Section Header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
+        <div className="text-center mb-6 md:mb-10">
+          <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
             Our Work
           </p>
-          <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <h2 className="font-[var(--font-heading)] text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-2 md:mb-4">
             Portfolio <span className="gradient-text">Gallery</span>
           </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground">
+          <p className="mx-auto max-w-xl text-xs md:text-sm text-muted-foreground">
             Browse through our collection of memorable moments captured with passion and precision.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-6 md:mb-10">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-medium transition-all duration-300 ${
                 activeCategory === category.id
                   ? "bg-gradient-to-r from-amber-400 to-amber-600 text-background shadow-lg shadow-amber-500/30"
                   : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
@@ -169,12 +169,12 @@ export function Portfolio() {
         {/* Masonry Grid */}
         <div 
           ref={gridRef}
-          className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+          className="columns-2 lg:columns-3 gap-2 md:gap-3 space-y-2 md:space-y-3"
         >
           {filteredItems.map((item, index) => (
             <div
               key={item.id}
-              className={`break-inside-avoid group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 ${
+              className={`break-inside-avoid group relative overflow-hidden rounded-xl md:rounded-2xl cursor-pointer transition-all duration-500 ${
                 visibleItems.includes(index) 
                   ? "opacity-100 translate-y-0" 
                   : "opacity-0 translate-y-8"
@@ -192,13 +192,13 @@ export function Portfolio() {
                 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-400 text-background mb-4 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
-                    <ZoomIn className="h-6 w-6" />
+                  <div className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center rounded-full bg-amber-400 text-background mb-2 md:mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
+                    <ZoomIn className="h-3.5 w-3.5 md:h-5 md:w-5" />
                   </div>
-                  <p className="text-foreground font-medium text-center px-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-150">
+                  <p className="text-foreground font-medium text-center px-2 text-[10px] md:text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-150">
                     {item.title}
                   </p>
-                  <p className="text-amber-400 text-sm capitalize transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
+                  <p className="text-amber-400 text-[9px] md:text-xs capitalize transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
                     {item.category}
                   </p>
                 </div>
