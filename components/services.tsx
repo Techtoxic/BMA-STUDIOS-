@@ -42,7 +42,7 @@ const services = [
     title: "Graphic Design",
     subtitle: "Logos, branding & prints",
     price: "From KSH 2,500",
-    image: "https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80",
     orientation: "landscape",
   },
   {
@@ -80,7 +80,7 @@ export function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="relative py-12 md:py-20 overflow-hidden">
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
           <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">

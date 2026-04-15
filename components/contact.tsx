@@ -76,13 +76,13 @@ Message: ${formData.message}`;
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="relative py-12 md:py-20 overflow-hidden">
+    <section id="contact" ref={sectionRef} className="relative z-10 py-12 md:py-20 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
-      <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-amber-400/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-amber-600/5 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background z-0" />
+      <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-amber-400/5 rounded-full blur-3xl z-0" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 md:w-96 md:h-96 bg-amber-600/5 rounded-full blur-3xl z-0" />
 
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-6 md:mb-10">
           <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">

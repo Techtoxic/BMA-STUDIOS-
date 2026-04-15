@@ -26,8 +26,8 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-secondary/50 border-t border-border -mt-4 md:-mt-6">
-      <div className="mx-auto max-w-6xl px-4 py-4 md:py-5">
+    <footer className="relative z-20 bg-secondary/50 border-t border-border">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Compact Footer - All in one row on desktop, stacked compact on mobile */}
         <div className="flex flex-col gap-3 md:gap-4">
           
