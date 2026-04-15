@@ -50,7 +50,7 @@ const products = [
     category: "Accessories",
     price: "KSH 18,500",
     originalPrice: null,
-    image: "https://images.unsplash.com/photo-1583954964643-e6b0573d6f4a?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1617575521317-d2974f3b56d2?w=800&q=80",
     rating: 4,
     features: ["Carbon Fiber", "Ball Head", "Max Load 15kg"],
     inStock: true,
