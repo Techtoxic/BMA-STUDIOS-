@@ -1,24 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, Phone, Mail, MapPin, Instagram, Facebook, Twitter, Youtube, ArrowUp } from "lucide-react";
+import { Camera, Phone, Mail, MapPin, ArrowUp } from "lucide-react";
 
-const services = ["Wedding", "Portraits", "Photoshoots", "Mounting", "Design", "Training"];
-const quickLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Services", href: "#services" },
-  { name: "Portfolio", href: "#portfolio" },
-  { name: "Products", href: "#products" },
-  { name: "About", href: "#about" },
-  { name: "Contact", href: "#contact" },
-];
-
-const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Youtube, href: "#", label: "YouTube" },
-];
+const services = ["Wedding", "Portrait", "Events", "Design", "Training", "Equipment"];
+const links = ["Home", "Services", "Portfolio", "Products", "About", "Contact"];
 
 export function Footer() {
   const scrollToTop = () => {
@@ -26,112 +12,78 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative z-20 bg-secondary/50 border-t border-border">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-        {/* Compact Footer - All in one row on desktop, stacked compact on mobile */}
-        <div className="flex flex-col gap-3 md:gap-4">
+    <footer className="bg-background border-t border-border py-2.5 sm:py-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Single Row Layout */}
+        <div className="flex flex-col gap-1.5 sm:gap-3">
           
-          {/* Row 1: Logo, Services, Quick Links */}
-          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-3 gap-y-2 text-[10px] md:text-[11px]">
+          {/* Row 1: Logo, Services, Links */}
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-2 gap-y-1 text-[7px] sm:text-[9px]">
             {/* Logo */}
-            <Link href="#home" className="flex items-center gap-1.5 text-foreground hover:text-amber-400 transition-colors">
-              <Camera className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
-              <span className="font-semibold text-xs md:text-sm">BMA Photography</span>
+            <Link href="#home" className="flex items-center gap-1 text-foreground hover:text-amber-400 transition-colors">
+              <Camera className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-400" strokeWidth={1.5} />
+              <span className="font-semibold text-[8px] sm:text-[10px]">BMA Photography</span>
             </Link>
 
-            {/* Divider */}
             <span className="text-border hidden md:inline">|</span>
 
-            {/* Services inline - hidden on mobile */}
-            <div className="hidden md:flex items-center gap-1 text-muted-foreground">
-              <span className="text-foreground font-medium">Services:</span>
+            {/* Services */}
+            <div className="hidden md:flex items-center gap-0.5 text-muted-foreground">
+              <span className="text-foreground">Services:</span>
               {services.map((service, index) => (
                 <span key={index} className="flex items-center">
                   <a href="#services" className="hover:text-amber-400 transition-colors">{service}</a>
-                  {index < services.length - 1 && <span className="mx-1 text-border">|</span>}
+                  {index < services.length - 1 && <span className="mx-0.5 text-border">|</span>}
                 </span>
               ))}
             </div>
 
-            {/* Divider */}
             <span className="text-border hidden lg:inline">|</span>
 
-            {/* Quick Links inline - show fewer on mobile */}
-            <div className="flex items-center gap-1 text-muted-foreground">
-              {quickLinks.slice(0, 4).map((link, index) => (
+            {/* Links */}
+            <div className="flex items-center gap-0.5 text-muted-foreground">
+              {links.map((link, index) => (
                 <span key={index} className="flex items-center">
-                  <Link href={link.href} className="hover:text-amber-400 transition-colors">{link.name}</Link>
-                  {index < 3 && <span className="mx-1 text-border">|</span>}
+                  <Link href={`#${link.toLowerCase()}`} className="hover:text-amber-400 transition-colors">{link}</Link>
+                  {index < links.length - 1 && <span className="mx-0.5 text-border">|</span>}
                 </span>
               ))}
-              <span className="hidden md:flex items-center">
-                {quickLinks.slice(4).map((link, index) => (
-                  <span key={index} className="flex items-center">
-                    <span className="mx-1 text-border">|</span>
-                    <Link href={link.href} className="hover:text-amber-400 transition-colors">{link.name}</Link>
-                  </span>
-                ))}
-              </span>
             </div>
           </div>
 
-          {/* Divider Line */}
+          {/* Divider */}
           <div className="border-t border-border" />
 
-          {/* Row 2: Contact, Social, Copyright */}
-          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-3 gap-y-2 text-[9px] md:text-[10px] text-muted-foreground">
-            {/* Contact Info inline */}
+          {/* Row 2: Contact, Copyright, Back to Top */}
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-2 gap-y-1 text-[6px] sm:text-[8px] text-muted-foreground">
+            {/* Contact */}
             <div className="flex items-center gap-1 flex-wrap justify-center">
-              <a href="tel:+254725297393" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
-                <Phone className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
+              <a href="tel:+254725297393" className="flex items-center gap-0.5 hover:text-amber-400 transition-colors">
+                <Phone className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-amber-400" strokeWidth={1.5} />
                 <span>+254 725 297393</span>
               </a>
               <span className="text-border">|</span>
-              <a href="mailto:info@bmaphotography.co.ke" className="flex items-center gap-1 hover:text-amber-400 transition-colors">
-                <Mail className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
+              <a href="mailto:info@bma.co.ke" className="flex items-center gap-0.5 hover:text-amber-400 transition-colors">
+                <Mail className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-amber-400" strokeWidth={1.5} />
                 <span>info@bma.co.ke</span>
               </a>
-              <span className="text-border hidden md:inline">|</span>
-              <span className="hidden md:flex items-center gap-1">
-                <MapPin className="h-2.5 w-2.5 md:h-3 md:w-3 text-amber-400" />
+              <span className="text-border">|</span>
+              <span className="flex items-center gap-0.5">
+                <MapPin className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-amber-400" strokeWidth={1.5} />
                 <span>Nyeri, Kenya</span>
               </span>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-1.5 md:gap-2">
-              {socialLinks.map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  className="text-muted-foreground hover:text-amber-400 transition-colors"
-                  aria-label={social.label}
-                >
-                  <social.icon className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                </a>
-              ))}
-              <span className="text-border">|</span>
-              <a
-                href="https://wa.me/254725297393"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-amber-400 hover:text-amber-300 transition-colors font-medium"
-              >
-                WhatsApp
-              </a>
-            </div>
-
-            {/* Copyright & Back to Top */}
-            <div className="flex items-center gap-2">
-              <span>&copy; {new Date().getFullYear()} BMA</span>
+            {/* Copyright & Top */}
+            <div className="flex items-center gap-1.5">
+              <span>© 2024 BMA Photography</span>
               <span className="text-border">|</span>
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-1 hover:text-amber-400 transition-colors"
-                aria-label="Back to top"
+                className="flex items-center gap-0.5 hover:text-amber-400 transition-colors"
               >
                 <span>Top</span>
-                <ArrowUp className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                <ArrowUp className="h-2 w-2 sm:h-2.5 sm:w-2.5" strokeWidth={1.5} />
               </button>
             </div>
           </div>
