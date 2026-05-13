@@ -79,7 +79,7 @@ export function Services() {
   }, []);
 
   return (
-    <section id="services" ref={sectionRef} className="relative py-12 md:py-20 overflow-hidden">
+    <section id="services" ref={sectionRef} className="relative py-6 md:py-12 overflow-hidden">
       <div className="relative mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
