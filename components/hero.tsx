@@ -66,8 +66,8 @@ export function Hero() {
       {/* Content Container */}
       <div className="relative z-10 flex-1 flex flex-col">
         
-        {/* Main Content Area - Slightly down from top */}
-        <div className="pt-24 sm:pt-28 pb-4">
+        {/* Main Content Area - Slightly down desktop, further down mobile */}
+        <div className="pt-32 sm:pt-20 pb-4">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
