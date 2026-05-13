@@ -68,7 +68,7 @@ export function Hero() {
         
         {/* Main Content Area - Further down on mobile */}
         <div className="pt-44 sm:pt-20 pb-4">
-          <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
               {/* Left Side - Main Headline */}
@@ -160,7 +160,7 @@ export function Hero() {
 
         {/* Stats Section - Pushed to bottom */}
         <div className="pb-4 sm:pb-6 mt-auto">
-          <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               
               {/* Left - Stats */}
