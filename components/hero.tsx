@@ -66,15 +66,15 @@ export function Hero() {
       {/* Content Container */}
       <div className="relative z-10 flex-1 flex flex-col">
         
-        {/* Main Content Area - Further down on mobile */}
-        <div className="pt-44 sm:pt-20 pb-4">
+        {/* Main Content Area - Push further down on desktop */}
+        <div className="pt-44 sm:pt-32 pb-4">
           <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
               {/* Left Side - Main Headline */}
               <div className="lg:flex-1 lg:max-w-2xl">
                 <h1 
-                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 sm:mb-4"
+                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.1] mb-8 sm:mb-6"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-foreground">Capturing Your</span>
@@ -87,15 +87,15 @@ export function Hero() {
                   className="opacity-0 animate-slide-in-left delay-200 mb-5 sm:mb-4 flex items-center flex-wrap"
                   style={{ animationFillMode: "forwards" }}
                 >
-                  <span className="text-sm text-muted-foreground">We specialize in </span>
-                  <span className="text-sm text-amber-400 font-semibold ml-1">
+                  <span className="text-sm sm:text-base text-muted-foreground">We specialize in </span>
+                  <span className="text-sm sm:text-base text-amber-400 font-semibold ml-1">
                     {displayText}
                     <span className="animate-pulse">|</span>
                   </span>
                 </div>
 
                 <p 
-                  className="opacity-0 animate-slide-in-left delay-300 mb-8 sm:mb-6 max-w-md text-sm sm:text-base text-muted-foreground leading-relaxed"
+                  className="opacity-0 animate-slide-in-left delay-300 mb-10 sm:mb-8 max-w-lg text-sm sm:text-lg text-muted-foreground leading-relaxed"
                   style={{ animationFillMode: "forwards" }}
                 >
                   Professional photography services in Nyeri, Kenya. Transform your special 
@@ -104,7 +104,7 @@ export function Hero() {
 
                 {/* CTA Buttons */}
                 <div 
-                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-4 sm:gap-3"
+                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-5 sm:gap-4"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <a
@@ -139,17 +139,17 @@ export function Hero() {
 
               {/* Right Side - Description Card (Desktop Only) */}
               <div 
-                className="hidden lg:block lg:flex-1 lg:max-w-sm opacity-0 animate-slide-in-right delay-500"
+                className="hidden lg:block lg:flex-1 lg:max-w-md opacity-0 animate-slide-in-right delay-500"
                 style={{ animationFillMode: "forwards" }}
               >
-                <div className="border-l-2 border-amber-400/30 pl-6">
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                <div className="border-l-2 border-amber-400/30 pl-8">
+                  <p className="text-base text-muted-foreground leading-relaxed mb-6">
                     From wedding celebrations to professional portraits, we bring your vision to life with expert craftsmanship.
                   </p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="h-1 w-1 rounded-full bg-amber-400"></span>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
                     <span>Est. 2014</span>
-                    <span className="h-1 w-1 rounded-full bg-amber-400"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
                     <span>Nyeri, Kenya</span>
                   </div>
                 </div>
@@ -158,8 +158,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Pushed up significantly */}
-        <div className="py-4 sm:py-5">
+        {/* Stats Section - Pushed further down */}
+        <div className="pt-8 sm:pt-12 pb-4 sm:pb-6 mt-auto">
           <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               
