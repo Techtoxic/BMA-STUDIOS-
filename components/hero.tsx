@@ -67,7 +67,7 @@ export function Hero() {
       <div className="relative z-10 flex-1 flex flex-col justify-center">
         
         {/* Main Content Area - No flex-1 to prevent pushing stats down */}
-        <div className="pt-24 sm:pt-20 pb-4">
+        <div className="pt-20 sm:pt-16 pb-4">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
