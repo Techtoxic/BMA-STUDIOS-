@@ -66,8 +66,8 @@ export function Hero() {
       {/* Content Container */}
       <div className="relative z-10 flex-1 flex flex-col">
         
-        {/* Main Content Area - Push further down on desktop */}
-        <div className="pt-44 sm:pt-32 pb-4">
+        {/* Main Content Area - Push significantly down on desktop */}
+        <div className="pt-44 sm:pt-44 pb-4">
           <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
@@ -158,8 +158,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Pushed further down */}
-        <div className="pt-8 sm:pt-12 pb-4 sm:pb-6 mt-auto">
+        {/* Stats Section - Up on mobile, down on desktop */}
+        <div className="pt-4 sm:pt-16 pb-4 sm:pb-6">
           <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               

@@ -39,7 +39,7 @@ export function Portfolio() {
 
   return (
     <section id="portfolio" className="py-6 sm:py-12 bg-background">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
         {/* Header */}
         <div className="mb-4 sm:mb-6">
           <div className="flex items-center gap-2 mb-2">
