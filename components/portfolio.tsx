@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getPortfolio, urlFor } from "@/lib/sanity";
 
-const categories = ["All", "Wedding", "Portrait", "Event", "Commercial"];
+const defaultCategories = ["All", "Wedding", "Portrait", "Event", "Studio", "Creative", "Product"];
 
 interface PortfolioItem {
   _id: string;
@@ -38,9 +38,13 @@ export function Portfolio() {
     fetchPortfolio();
   }, []);
 
+  // Build dynamic categories from actual data
+  const uniqueCategories = Array.from(new Set(portfolioItems.map(item => item.category).filter(Boolean)));
+  const categories = ["All", ...uniqueCategories.map(c => c.charAt(0).toUpperCase() + c.slice(1))];
+
   const filteredItems = activeCategory === "All" 
     ? portfolioItems 
-    : portfolioItems.filter(item => item.category === activeCategory);
+    : portfolioItems.filter(item => item.category?.toLowerCase() === activeCategory.toLowerCase());
 
   const getImageSrc = (item: PortfolioItem) => {
     if (item.image?.asset) {
@@ -132,12 +136,12 @@ export function Portfolio() {
           ))}
         </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-2">
+        {/* Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2">
           {filteredItems.map((item) => (
             <div
               key={item._id}
-              className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
+              className="group cursor-pointer"
               onClick={() => setSelectedImage(item._id)}
             >
               <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
@@ -155,9 +159,7 @@ export function Portfolio() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-2">
                     <p className="text-xs font-medium text-white">{item.title}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-white/70">{item.category}</span>
-                    </div>
+                    <span className="text-xs text-white/70 capitalize">{item.category}</span>
                   </div>
                 </div>
 
