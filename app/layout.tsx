@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: 'BMA Photography Studio | Nyeri, Kenya',
   description: 'Professional photography services in Nyeri - Wedding photography, studio portraits, photoshoots, graphic design, camera accessories and editing training.',
   keywords: ['photography', 'wedding photography', 'studio portraits', 'Nyeri', 'Kenya', 'photoshoots', 'graphic design'],
+  icons: {
+    icon: '/icon.svg',
+  },
 }
 
 export default function RootLayout({

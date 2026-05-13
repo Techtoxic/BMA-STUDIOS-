@@ -159,7 +159,7 @@ export function Portfolio() {
                   onClick={() => setOpenCategory(catName)}
                 >
                   {/* Stacked cards */}
-                  <div className="relative h-48 sm:h-56 lg:h-64">
+                  <div className="relative aspect-[3/4]">
                     {previewItems.map((item, i) => {
                       const total = previewItems.length;
                       const rotation = i === 0 ? -3 : i === 1 ? 0 : 3;
