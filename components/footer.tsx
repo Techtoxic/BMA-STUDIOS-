@@ -13,7 +13,7 @@ export function Footer() {
 
   return (
     <footer className="bg-background border-t border-border py-4 sm:py-4">
-      <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
         {/* Single Row Layout */}
         <div className="flex flex-col gap-2 sm:gap-3">
           

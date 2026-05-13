@@ -80,7 +80,7 @@ export function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="relative py-6 md:py-12 overflow-hidden">
-      <div className="relative mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+      <div className="relative w-full px-6 sm:px-10 lg:px-16 xl:px-20">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
           <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">

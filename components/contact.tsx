@@ -20,7 +20,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="py-6 sm:py-12 bg-secondary/30">
-      <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
+      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
         {/* Header */}
         <div className="mb-4 sm:mb-6">
           <div className="flex items-center gap-2 mb-2">
