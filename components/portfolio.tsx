@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { Eye, X, ChevronLeft, ChevronRight, ArrowLeft, Layers } from "lucide-react";
 import { getPortfolio, urlFor } from "@/lib/sanity";
@@ -21,6 +21,11 @@ export function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [mobileSlide, setMobileSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function fetchPortfolio() {
@@ -62,6 +67,44 @@ export function Portfolio() {
 
   // Items for the opened category
   const galleryItems = openCategory ? categoryMap[openCategory] || [] : [];
+
+  // Reset slide when category changes
+  useEffect(() => {
+    setMobileSlide(0);
+    setIsAutoPlaying(true);
+  }, [openCategory]);
+
+  // Auto-advance on mobile
+  useEffect(() => {
+    if (!openCategory || galleryItems.length <= 1 || !isAutoPlaying) return;
+    autoPlayRef.current = setInterval(() => {
+      setMobileSlide((prev) => (prev + 1) % galleryItems.length);
+    }, 3000);
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, [openCategory, galleryItems.length, isAutoPlaying]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    setIsAutoPlaying(false);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setMobileSlide((prev) => (prev + 1) % galleryItems.length);
+      } else {
+        setMobileSlide((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+      }
+    }
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  }, [galleryItems.length]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
 
   const currentIndex =
     selectedImage !== null ? galleryItems.findIndex((item) => item._id === selectedImage) : -1;
@@ -233,34 +276,92 @@ export function Portfolio() {
         {/* ===== GALLERY VIEW (open category) ===== */}
         {openCategory && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2">
+            {/* Mobile Carousel */}
+            <div
+              className="md:hidden relative overflow-hidden rounded-xl"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div className="relative aspect-[3/4] w-full">
+                {galleryItems.map((item, idx) => (
+                  <div
+                    key={item._id}
+                    className="absolute inset-0 transition-all duration-500 ease-in-out"
+                    style={{
+                      transform: `translateX(${(idx - mobileSlide) * 100}%)`,
+                      opacity: idx === mobileSlide ? 1 : 0.4,
+                    }}
+                  >
+                    <Image
+                      src={getImageSrc(item)}
+                      alt={item.title}
+                      fill
+                      sizes="100vw"
+                      className="object-cover"
+                      priority={idx === mobileSlide}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-sm font-medium text-white">{item.title}</p>
+                      <span className="text-xs text-white/70 capitalize">{item.category}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Progress dots */}
+              <div className="flex items-center justify-center gap-1.5 mt-3 pb-1">
+                {galleryItems.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => { setMobileSlide(idx); setIsAutoPlaying(false); setTimeout(() => setIsAutoPlaying(true), 5000); }}
+                    className={`rounded-full transition-all duration-300 ${
+                      idx === mobileSlide
+                        ? "w-5 h-1.5 bg-amber-400"
+                        : "w-1.5 h-1.5 bg-white/30"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Counter */}
+              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1">
+                <span className="text-[10px] text-white font-medium">
+                  {mobileSlide + 1} / {galleryItems.length}
+                </span>
+              </div>
+            </div>
+
+            {/* Desktop Grid */}
+            <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-2">
               {galleryItems.map((item) => (
                 <div
                   key={item._id}
                   className="group cursor-pointer"
                   onClick={() => setSelectedImage(item._id)}
                 >
-                  <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
+                  <div className="relative overflow-hidden rounded-lg">
                     <div className="relative aspect-[3/4] w-full">
                       <Image
                         src={getImageSrc(item)}
                         alt={item.title}
                         fill
-                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        sizes="(max-width: 1024px) 33vw, 25vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     </div>
 
                     {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-2">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-2">
                         <p className="text-xs font-medium text-white">{item.title}</p>
                         <span className="text-xs text-white/70 capitalize">{item.category}</span>
                       </div>
                     </div>
 
                     {/* View Icon */}
-                    <div className="absolute top-1.5 right-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <Eye className="h-3 w-3 text-white" strokeWidth={1.5} />
                     </div>
                   </div>
