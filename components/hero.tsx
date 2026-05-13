@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Volume2, VolumeX, ChevronDown, MapPin, Phone, Clock, Camera } from "lucide-react";
+import { ChevronDown, MapPin, Phone, Clock, Camera } from "lucide-react";
 
 const typewriterTexts = [
   "Wedding Photography",
@@ -14,8 +14,6 @@ const typewriterTexts = [
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -50,24 +48,6 @@ export function Hero() {
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, currentTextIndex]);
 
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
       {/* Video Background */}
@@ -91,26 +71,8 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/40" />
       </div>
 
-      {/* Video Controls - Top Right */}
-      <div className="absolute top-24 right-4 sm:right-6 z-20 flex gap-2">
-        <button
-          onClick={togglePlay}
-          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400/20 hover:text-amber-400"
-          aria-label={isPlaying ? "Pause video" : "Play video"}
-        >
-          {isPlaying ? <Pause className="h-3 w-3 sm:h-4 sm:w-4" /> : <Play className="h-3 w-3 sm:h-4 sm:w-4" />}
-        </button>
-        <button
-          onClick={toggleMute}
-          className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/30 backdrop-blur-sm text-foreground transition-all hover:bg-amber-400/20 hover:text-amber-400"
-          aria-label={isMuted ? "Unmute video" : "Mute video"}
-        >
-          {isMuted ? <VolumeX className="h-3 w-3 sm:h-4 sm:w-4" /> : <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />}
-        </button>
-      </div>
-
       {/* Main Content - Left Aligned, Distributed */}
-      <div className="relative z-10 flex-1 flex items-start sm:items-center pt-20 sm:pt-0">
+      <div className="relative z-10 flex-1 flex items-center pt-16 sm:pt-0">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
@@ -189,7 +151,7 @@ export function Hero() {
       </div>
 
       {/* Bottom Section - Stats Left, Studio Name Right */}
-      <div className="relative z-10 mb-2 sm:mb-6 mt-auto">
+      <div className="relative z-10 mb-4 sm:mb-6">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1.5 sm:gap-6">
             
