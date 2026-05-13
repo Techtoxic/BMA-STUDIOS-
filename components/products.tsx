@@ -11,7 +11,7 @@ const products = [
   { id: 5, name: "SanDisk 128GB", category: "Storage", price: 8500, image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=300&fit=crop", rating: 4.6, inStock: true, orientation: "landscape" },
   { id: 6, name: "Manfrotto Tripod", category: "Support", price: 45000, image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=500&fit=crop", rating: 4.8, inStock: true, orientation: "portrait" },
   { id: 7, name: "Peak Design Bag", category: "Bags", price: 32000, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop", rating: 4.7, inStock: true, orientation: "landscape" },
-  { id: 8, name: "Nikon Z6 II", category: "Camera", price: 298000, image: "https://images.unsplash.com/photo-1606986628270-2d695387fedf?w=400&h=500&fit=crop", rating: 4.8, inStock: true, orientation: "portrait" },
+  { id: 8, name: "Nikon Z6 II", category: "Camera", price: 298000, image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=500&fit=crop", rating: 4.8, inStock: true, orientation: "portrait" },
 ];
 
 export function Products() {
