@@ -67,7 +67,7 @@ export function Hero() {
       <div className="relative z-10 flex-1 flex flex-col">
         
         {/* Main Content Area - Push down on desktop */}
-        <div className="pt-44 sm:pt-56 lg:pt-60 pb-4">
+        <div className="pt-24 sm:pt-32 lg:pt-40 pb-4">
           <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
