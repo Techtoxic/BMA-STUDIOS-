@@ -1,264 +1,153 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { Eye, Heart, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-const categories = [
-  { id: "all", label: "All Work" },
-  { id: "wedding", label: "Weddings" },
-  { id: "portrait", label: "Portraits" },
-  { id: "fashion", label: "Fashion" },
-  { id: "events", label: "Events" },
-];
+const categories = ["All", "Wedding", "Portrait", "Event", "Commercial"];
 
 const portfolioItems = [
-  {
-    id: 1,
-    category: "wedding",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
-    title: "Sarah & James Wedding",
-    orientation: "landscape",
-  },
-  {
-    id: 2,
-    category: "portrait",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
-    title: "Portrait Session",
-    orientation: "portrait",
-  },
-  {
-    id: 3,
-    category: "fashion",
-    image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80",
-    title: "Fashion Editorial",
-    orientation: "portrait",
-  },
-  {
-    id: 4,
-    category: "wedding",
-    image: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80",
-    title: "Beach Wedding",
-    orientation: "landscape",
-  },
-  {
-    id: 5,
-    category: "events",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
-    title: "Corporate Event",
-    orientation: "landscape",
-  },
-  {
-    id: 6,
-    category: "portrait",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80",
-    title: "Studio Portrait",
-    orientation: "portrait",
-  },
-  {
-    id: 7,
-    category: "fashion",
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
-    title: "Outdoor Fashion",
-    orientation: "landscape",
-  },
-  {
-    id: 8,
-    category: "wedding",
-    image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80",
-    title: "Traditional Wedding",
-    orientation: "portrait",
-  },
-  {
-    id: 9,
-    category: "events",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80",
-    title: "Birthday Celebration",
-    orientation: "landscape",
-  },
-  {
-    id: 10,
-    category: "portrait",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
-    title: "Professional Headshot",
-    orientation: "portrait",
-  },
-  {
-    id: 11,
-    category: "fashion",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80",
-    title: "Street Fashion",
-    orientation: "portrait",
-  },
-  {
-    id: 12,
-    category: "wedding",
-    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80",
-    title: "Garden Wedding",
-    orientation: "landscape",
-  },
+  { id: 1, title: "Garden Wedding", category: "Wedding", image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=800&fit=crop", likes: 234, orientation: "portrait" },
+  { id: 2, title: "Corporate Headshot", category: "Portrait", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop", likes: 156, orientation: "landscape" },
+  { id: 3, title: "Product Launch", category: "Event", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop", likes: 189, orientation: "landscape" },
+  { id: 4, title: "Fashion Editorial", category: "Commercial", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop", likes: 312, orientation: "portrait" },
+  { id: 5, title: "Beach Ceremony", category: "Wedding", image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop", likes: 278, orientation: "landscape" },
+  { id: 6, title: "Studio Portrait", category: "Portrait", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop", likes: 198, orientation: "portrait" },
+  { id: 7, title: "Birthday Party", category: "Event", image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop", likes: 145, orientation: "landscape" },
+  { id: 8, title: "Brand Campaign", category: "Commercial", image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop", likes: 267, orientation: "landscape" },
 ];
 
 export function Portfolio() {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [lightboxImage, setLightboxImage] = useState<number | null>(null);
-  const [visibleItems, setVisibleItems] = useState<number[]>([]);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
-  const filteredItems = activeCategory === "all" 
+  const filteredItems = activeCategory === "All" 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory);
 
-  useEffect(() => {
-    setVisibleItems([]);
-    const timer = setTimeout(() => {
-      filteredItems.forEach((_, index) => {
-        setTimeout(() => {
-          setVisibleItems(prev => [...prev, index]);
-        }, index * 100);
-      });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [activeCategory, filteredItems.length]);
+  const currentIndex = selectedImage !== null 
+    ? filteredItems.findIndex(item => item.id === selectedImage)
+    : -1;
 
-  const navigateLightbox = (direction: "prev" | "next") => {
-    if (lightboxImage === null) return;
-    const currentIndex = filteredItems.findIndex(item => item.id === lightboxImage);
-    if (direction === "prev") {
-      const newIndex = currentIndex === 0 ? filteredItems.length - 1 : currentIndex - 1;
-      setLightboxImage(filteredItems[newIndex].id);
-    } else {
-      const newIndex = currentIndex === filteredItems.length - 1 ? 0 : currentIndex + 1;
-      setLightboxImage(filteredItems[newIndex].id);
-    }
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (currentIndex === -1) return;
+    const newIndex = direction === 'prev' 
+      ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
+      : (currentIndex + 1) % filteredItems.length;
+    setSelectedImage(filteredItems[newIndex].id);
   };
 
   return (
-    <section id="portfolio" className="relative py-12 md:py-20 bg-secondary/30">
+    <section id="portfolio" className="py-6 sm:py-12 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-6 md:mb-10">
-          <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
+        {/* Header */}
+        <div className="mb-3 sm:mb-6">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+            <div className="h-px w-4 sm:w-8 bg-amber-400" />
+            <span className="text-[8px] sm:text-xs uppercase tracking-widest text-amber-400">Portfolio</span>
+          </div>
+          <h2 className="text-sm sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
             Our Work
-          </p>
-          <h2 className="font-[var(--font-heading)] text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-2 md:mb-4">
-            Portfolio <span className="gradient-text">Gallery</span>
           </h2>
-          <p className="mx-auto max-w-xl text-xs md:text-sm text-muted-foreground">
-            Browse through our collection of memorable moments captured with passion and precision.
-          </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-6 md:mb-10">
+        <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-5">
           {categories.map((category) => (
             <button
-              key={category.id}
-              onClick={() => setActiveCategory(category.id)}
-              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-medium transition-all duration-300 ${
-                activeCategory === category.id
-                  ? "bg-gradient-to-r from-amber-400 to-amber-600 text-background shadow-lg shadow-amber-500/30"
-                  : "bg-secondary text-foreground/70 hover:bg-secondary/80 hover:text-foreground"
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-1.5 sm:px-2.5 py-0.5 text-[8px] sm:text-[10px] rounded-full transition-all duration-300 ${
+                activeCategory === category
+                  ? "bg-amber-400 text-background"
+                  : "border border-border text-muted-foreground hover:border-amber-400 hover:text-amber-400"
               }`}
             >
-              {category.label}
+              {category}
             </button>
           ))}
         </div>
 
         {/* Masonry Grid */}
-        <div 
-          ref={gridRef}
-          className="columns-2 lg:columns-3 gap-2 md:gap-3 space-y-2 md:space-y-3"
-        >
-          {filteredItems.map((item, index) => (
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-1 sm:gap-2">
+          {filteredItems.map((item) => (
             <div
               key={item.id}
-              className={`break-inside-avoid group relative overflow-hidden rounded-xl md:rounded-2xl cursor-pointer transition-all duration-500 ${
-                visibleItems.includes(index) 
-                  ? "opacity-100 translate-y-0" 
-                  : "opacity-0 translate-y-8"
-              }`}
-              onClick={() => setLightboxImage(item.id)}
+              className="mb-1 sm:mb-2 break-inside-avoid group cursor-pointer"
+              onClick={() => setSelectedImage(item.id)}
             >
-              <div className={`relative ${item.orientation === "portrait" ? "aspect-[3/4]" : "aspect-[4/3]"}`}>
+              <div className="relative overflow-hidden rounded-md sm:rounded-lg">
                 <Image
                   src={item.image}
                   alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  width={300}
+                  height={item.orientation === 'portrait' ? 400 : 200}
+                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center rounded-full bg-amber-400 text-background mb-2 md:mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
-                    <ZoomIn className="h-3.5 w-3.5 md:h-5 md:w-5" />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-1 sm:p-2">
+                    <p className="text-[8px] sm:text-[10px] font-medium text-white">{item.title}</p>
+                    <div className="flex items-center justify-between mt-0.5">
+                      <span className="text-[6px] sm:text-[8px] text-white/70">{item.category}</span>
+                      <div className="flex items-center gap-0.5">
+                        <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-amber-400" strokeWidth={1.5} />
+                        <span className="text-[6px] sm:text-[8px] text-white/70">{item.likes}</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-foreground font-medium text-center px-2 text-[10px] md:text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-150">
-                    {item.title}
-                  </p>
-                  <p className="text-amber-400 text-[9px] md:text-xs capitalize transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
-                    {item.category}
-                  </p>
+                </div>
+
+                {/* View Icon */}
+                <div className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Eye className="h-2 w-2 sm:h-3 sm:w-3 text-white" strokeWidth={1.5} />
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Lightbox */}
-      {lightboxImage !== null && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4"
-          onClick={() => setLightboxImage(null)}
-        >
-          <button
-            onClick={() => setLightboxImage(null)}
-            className="absolute top-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
-            aria-label="Close lightbox"
-          >
-            <X className="h-6 w-6" />
-          </button>
+        {/* Lightbox */}
+        {selectedImage !== null && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 p-2 text-white/70 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" strokeWidth={1.5} />
+            </button>
+            
+            <button
+              onClick={() => navigateImage('prev')}
+              className="absolute left-2 sm:left-4 p-2 text-white/70 hover:text-white transition-colors"
+            >
+              <ChevronLeft className="h-6 w-6" strokeWidth={1.5} />
+            </button>
 
-          <button
-            onClick={(e) => { e.stopPropagation(); navigateLightbox("prev"); }}
-            className="absolute left-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
+            <div className="max-w-4xl max-h-[80vh]">
+              <Image
+                src={filteredItems.find(item => item.id === selectedImage)?.image || ''}
+                alt="Selected"
+                width={800}
+                height={600}
+                className="max-h-[80vh] w-auto object-contain rounded-lg"
+              />
+              <div className="mt-2 text-center">
+                <p className="text-xs text-white">{filteredItems.find(item => item.id === selectedImage)?.title}</p>
+                <p className="text-[10px] text-white/50">{filteredItems.find(item => item.id === selectedImage)?.category}</p>
+              </div>
+            </div>
 
-          <button
-            onClick={(e) => { e.stopPropagation(); navigateLightbox("next"); }}
-            className="absolute right-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-amber-400 hover:text-background"
-            aria-label="Next image"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          <div 
-            className="relative max-w-5xl max-h-[85vh] w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {(() => {
-              const item = portfolioItems.find(i => i.id === lightboxImage);
-              if (!item) return null;
-              return (
-                <div className="relative aspect-[3/2] w-full">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-contain rounded-2xl"
-                  />
-                </div>
-              );
-            })()}
+            <button
+              onClick={() => navigateImage('next')}
+              className="absolute right-2 sm:right-4 p-2 text-white/70 hover:text-white transition-colors"
+            >
+              <ChevronRight className="h-6 w-6" strokeWidth={1.5} />
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
