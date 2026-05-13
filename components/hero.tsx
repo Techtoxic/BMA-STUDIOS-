@@ -66,8 +66,8 @@ export function Hero() {
       {/* Content Container */}
       <div className="relative z-10 flex-1 flex flex-col">
         
-        {/* Main Content Area - Slightly down desktop, further down mobile */}
-        <div className="pt-32 sm:pt-20 pb-4">
+        {/* Main Content Area - Further down on mobile */}
+        <div className="pt-44 sm:pt-20 pb-4">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
@@ -121,6 +121,19 @@ export function Hero() {
                     <Phone className="h-4 w-4" />
                     <span>Call Now</span>
                   </a>
+                </div>
+
+                {/* Mobile Only - Service Tags to fill space */}
+                <div className="sm:hidden mt-10 opacity-0 animate-fade-in delay-500" style={{ animationFillMode: "forwards" }}>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Weddings</span>
+                    <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Portraits</span>
+                    <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Events</span>
+                    <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Studio</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Professional photography & videography services. We capture your most precious moments with artistic excellence.
+                  </p>
                 </div>
               </div>
 
