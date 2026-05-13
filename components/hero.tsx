@@ -145,8 +145,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Sits right below content */}
-        <div className="pb-4 sm:pb-6">
+        {/* Stats Section - Pushed to bottom */}
+        <div className="pb-4 sm:pb-6 mt-auto">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               
