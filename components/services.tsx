@@ -46,6 +46,14 @@ const services = [
     orientation: "landscape",
   },
   {
+    icon: Sparkles,
+    title: "Brand Campaign",
+    subtitle: "Marketing & visual identity",
+    price: "From KSH 25,000",
+    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=80",
+    orientation: "landscape",
+  },
+  {
     icon: GraduationCap,
     title: "Editing Training",
     subtitle: "Lightroom & Photoshop courses",
@@ -158,50 +166,6 @@ export function Services() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Bottom Showcase Images */}
-        <div className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 opacity-0 animate-fade-in delay-700" style={{ animationFillMode: "forwards" }}>
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=400&h=300&fit=crop"
-              alt="Creative Photoshoot"
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <span className="absolute bottom-3 left-3 text-xs md:text-sm font-semibold text-white">Creative Photoshoots</span>
-          </div>
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=300&fit=crop"
-              alt="Graphic Design"
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <span className="absolute bottom-3 left-3 text-xs md:text-sm font-semibold text-white">Graphic Design</span>
-          </div>
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop"
-              alt="Brand Campaign"
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <span className="absolute bottom-3 left-3 text-xs md:text-sm font-semibold text-white">Brand Campaign</span>
-          </div>
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=300&fit=crop"
-              alt="Studio Work"
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <span className="absolute bottom-3 left-3 text-xs md:text-sm font-semibold text-white">Studio Work</span>
-          </div>
         </div>
       </div>
     </section>
