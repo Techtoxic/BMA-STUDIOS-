@@ -33,7 +33,7 @@ export function Header() {
           : "bg-transparent py-5"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="#home" className="flex items-center gap-2 group">

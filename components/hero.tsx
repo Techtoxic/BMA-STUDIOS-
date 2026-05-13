@@ -158,8 +158,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Pushed to bottom */}
-        <div className="pb-4 sm:pb-6 mt-auto">
+        {/* Stats Section - Pushed up significantly */}
+        <div className="py-4 sm:py-5">
           <div className="mx-auto max-w-[1600px] w-full px-6 sm:px-8 lg:px-12 xl:px-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               
