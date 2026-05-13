@@ -79,10 +79,10 @@ export function Hero() {
           muted
           playsInline
           className="h-full w-full object-cover"
-          poster="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1920&q=80"
+          poster="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1920&q=80"
         >
           <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-photographer-taking-pictures-in-a-studio-34421-large.mp4"
+            src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-woman-holding-a-photo-camera-34399-large.mp4"
             type="video/mp4"
           />
         </video>
@@ -110,7 +110,7 @@ export function Hero() {
       </div>
 
       {/* Main Content - Left Aligned, Distributed */}
-      <div className="relative z-10 flex-1 flex items-center pt-16 sm:pt-0">
+      <div className="relative z-10 flex-1 flex items-start sm:items-center pt-20 sm:pt-0">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
             
@@ -189,7 +189,7 @@ export function Hero() {
       </div>
 
       {/* Bottom Section - Stats Left, Studio Name Right */}
-      <div className="relative z-10 mb-8 sm:mb-6">
+      <div className="relative z-10 mb-2 sm:mb-6 mt-auto">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1.5 sm:gap-6">
             
