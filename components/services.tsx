@@ -148,7 +148,7 @@ export function Services() {
                 }`}>
                   <Image
                     src={
-                      service.image?.asset
+                      service.image?.asset?._ref
                         ? urlFor(service.image).width(600).height(service.orientation === 'portrait' ? 800 : 400).fit('crop').auto('format').quality(80).url()
                         : service.imageUrl || service.image
                     }

@@ -47,7 +47,7 @@ export function Portfolio() {
     : portfolioItems.filter(item => item.category?.toLowerCase() === activeCategory.toLowerCase());
 
   const getImageSrc = (item: PortfolioItem) => {
-    if (item.image?.asset) {
+    if (item.image?.asset?._ref) {
       return urlFor(item.image).width(600).height(800).fit('crop').auto('format').quality(80).url();
     }
     return item.imageUrl || '';

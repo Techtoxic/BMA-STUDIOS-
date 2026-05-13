@@ -105,7 +105,7 @@ export function Products() {
                 <div className="relative aspect-[3/4] w-full">
                 <Image
                   src={
-                    product.image?.asset
+                    product.image?.asset?._ref
                       ? urlFor(product.image).width(400).height(500).fit('crop').auto('format').quality(80).url()
                       : product.imageUrl || product.image
                   }

@@ -78,7 +78,7 @@ export function Hero() {
         <div 
           className="h-full w-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: heroData?.backgroundImage?.asset
+            backgroundImage: heroData?.backgroundImage?.asset?._ref || heroData?.backgroundImage?.asset?._id
               ? `url('${urlFor(heroData.backgroundImage).width(1920).height(1080).fit('crop').auto('format').quality(80).url()}')`
               : heroData?.backgroundImageUrl
                 ? `url('${heroData.backgroundImageUrl}')`
