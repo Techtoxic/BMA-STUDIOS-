@@ -38,19 +38,7 @@ export function Products() {
     fetchProducts();
   }, []);
 
-  // Fallback products if Sanity fails
-  const fallbackProducts: Product[] = [
-    { _id: "1", name: "Canon EOS R5", category: "Camera", price: 485000, originalPrice: 520000, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=500&fit=crop", rating: 4.9, inStock: true },
-    { _id: "2", name: "Sony 24-70mm", category: "Lens", price: 165000, image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&h=300&fit=crop", rating: 4.8, inStock: true },
-    { _id: "3", name: "Godox AD600", category: "Lighting", price: 78000, image: "https://images.unsplash.com/photo-1542567455-cd733f23fbb1?w=400&h=300&fit=crop", rating: 4.7, inStock: true },
-    { _id: "4", name: "DJI RS 3 Pro", category: "Stabilizer", price: 125000, originalPrice: 145000, image: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=500&fit=crop", rating: 4.9, inStock: false },
-    { _id: "5", name: "SanDisk 128GB", category: "Storage", price: 8500, image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=300&fit=crop", rating: 4.6, inStock: true },
-    { _id: "6", name: "Manfrotto Tripod", category: "Support", price: 45000, image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=500&fit=crop", rating: 4.8, inStock: true },
-    { _id: "7", name: "Peak Design Bag", category: "Bags", price: 32000, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop", rating: 4.7, inStock: true },
-    { _id: "8", name: "Nikon Z6 II", category: "Camera", price: 298000, image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=500&fit=crop", rating: 4.8, inStock: true },
-  ];
-
-  const displayProducts = products.length > 0 ? products : fallbackProducts;
+  const displayProducts = products;
 
   if (loading) {
     return (
@@ -68,6 +56,25 @@ export function Products() {
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin h-8 w-8 border-2 border-amber-400 border-t-transparent rounded-full" />
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (displayProducts.length === 0) {
+    return (
+      <section id="products" className="py-6 sm:py-12 bg-secondary/30">
+        <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-px w-6 sm:w-8 bg-amber-400" />
+              <span className="text-xs uppercase tracking-widest text-amber-400">Shop</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
+              Camera & Accessories
+            </h2>
+          </div>
+          <p className="text-center text-muted-foreground text-sm">Coming soon</p>
         </div>
       </section>
     );

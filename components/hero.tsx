@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, MapPin, Phone, Clock, Camera } from "lucide-react";
+import { getHero, urlFor } from "@/lib/sanity";
 
 const typewriterTexts = [
   "Wedding Photography",
@@ -12,16 +13,38 @@ const typewriterTexts = [
   "Camera Sales",
 ];
 
+interface HeroData {
+  headline?: string;
+  subheadline?: string;
+  ctaText?: string;
+  phone?: string;
+  backgroundImage?: any;
+  backgroundImageUrl?: string;
+}
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [heroData, setHeroData] = useState<HeroData | null>(null);
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.play();
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchHero() {
+      try {
+        const data = await getHero();
+        if (data) setHeroData(data);
+      } catch (error) {
+        console.error("Failed to fetch hero:", error);
+      }
+    }
+    fetchHero();
   }, []);
 
   // Typing effect
@@ -55,7 +78,11 @@ export function Hero() {
         <div 
           className="h-full w-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1920&q=80')`
+            backgroundImage: heroData?.backgroundImage?.asset
+              ? `url('${urlFor(heroData.backgroundImage).width(1920).height(1080).fit('crop').auto('format').quality(80).url()}')`
+              : heroData?.backgroundImageUrl
+                ? `url('${heroData.backgroundImageUrl}')`
+                : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
           }}
         />
         {/* Gradient Overlays */}

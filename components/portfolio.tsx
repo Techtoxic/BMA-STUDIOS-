@@ -1,32 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Eye, Heart, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { getPortfolio, urlFor } from "@/lib/sanity";
 
 const categories = ["All", "Wedding", "Portrait", "Event", "Commercial"];
 
-const portfolioItems = [
-  { id: 1, title: "Garden Wedding", category: "Wedding", image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=800&fit=crop", likes: 234, orientation: "portrait" },
-  { id: 2, title: "Corporate Headshot", category: "Portrait", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop", likes: 156, orientation: "landscape" },
-  { id: 3, title: "Product Launch", category: "Event", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop", likes: 189, orientation: "landscape" },
-  { id: 4, title: "Fashion Editorial", category: "Commercial", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop", likes: 312, orientation: "portrait" },
-  { id: 5, title: "Beach Ceremony", category: "Wedding", image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop", likes: 278, orientation: "landscape" },
-  { id: 6, title: "Studio Portrait", category: "Portrait", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop", likes: 198, orientation: "portrait" },
-  { id: 7, title: "Birthday Party", category: "Event", image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop", likes: 145, orientation: "landscape" },
-  { id: 8, title: "Brand Campaign", category: "Commercial", image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop", likes: 267, orientation: "landscape" },
-];
+interface PortfolioItem {
+  _id: string;
+  title: string;
+  category: string;
+  image: any;
+  imageUrl?: string;
+  client?: string;
+  date?: string;
+  featured?: boolean;
+}
 
 export function Portfolio() {
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchPortfolio() {
+      try {
+        const data = await getPortfolio();
+        setPortfolioItems(data);
+      } catch (error) {
+        console.error("Failed to fetch portfolio:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPortfolio();
+  }, []);
 
   const filteredItems = activeCategory === "All" 
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory);
 
+  const getImageSrc = (item: PortfolioItem) => {
+    if (item.image?.asset) {
+      return urlFor(item.image).width(600).height(800).fit('crop').auto('format').quality(80).url();
+    }
+    return item.imageUrl || '';
+  };
+
   const currentIndex = selectedImage !== null 
-    ? filteredItems.findIndex(item => item.id === selectedImage)
+    ? filteredItems.findIndex(item => item._id === selectedImage)
     : -1;
 
   const navigateImage = (direction: 'prev' | 'next') => {
@@ -34,8 +58,48 @@ export function Portfolio() {
     const newIndex = direction === 'prev' 
       ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
       : (currentIndex + 1) % filteredItems.length;
-    setSelectedImage(filteredItems[newIndex].id);
+    setSelectedImage(filteredItems[newIndex]._id);
   };
+
+  if (loading) {
+    return (
+      <section id="portfolio" className="py-6 sm:py-12 bg-background">
+        <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-px w-6 sm:w-8 bg-amber-400" />
+              <span className="text-xs uppercase tracking-widest text-amber-400">Portfolio</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
+              Our Work
+            </h2>
+          </div>
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin h-8 w-8 border-2 border-amber-400 border-t-transparent rounded-full" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (portfolioItems.length === 0) {
+    return (
+      <section id="portfolio" className="py-6 sm:py-12 bg-background">
+        <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-px w-6 sm:w-8 bg-amber-400" />
+              <span className="text-xs uppercase tracking-widest text-amber-400">Portfolio</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
+              Our Work
+            </h2>
+          </div>
+          <p className="text-center text-muted-foreground text-sm">Coming soon</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="portfolio" className="py-6 sm:py-12 bg-background">
@@ -72,18 +136,20 @@ export function Portfolio() {
         <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-2">
           {filteredItems.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
-              onClick={() => setSelectedImage(item.id)}
+              onClick={() => setSelectedImage(item._id)}
             >
               <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={300}
-                  height={item.orientation === 'portrait' ? 400 : 200}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+                <div className="relative aspect-[3/4] w-full">
+                  <Image
+                    src={getImageSrc(item)}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
                 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -91,10 +157,6 @@ export function Portfolio() {
                     <p className="text-xs font-medium text-white">{item.title}</p>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-white/70">{item.category}</span>
-                      <div className="flex items-center gap-0.5">
-                        <Heart className="h-2.5 w-2.5 sm:h-2.5 sm:w-2.5 text-amber-400" strokeWidth={1.5} />
-                        <span className="text-xs text-white/70">{item.likes}</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -127,15 +189,15 @@ export function Portfolio() {
 
             <div className="max-w-4xl max-h-[80vh] w-full">
               <Image
-                src={filteredItems.find(item => item.id === selectedImage)?.image || ''}
+                src={getImageSrc(filteredItems.find(item => item._id === selectedImage) || filteredItems[0])}
                 alt="Selected"
                 width={800}
                 height={600}
                 className="max-h-[70vh] sm:max-h-[80vh] w-auto mx-auto object-contain rounded-lg"
               />
               <div className="mt-3 text-center">
-                <p className="text-sm sm:text-base text-white">{filteredItems.find(item => item.id === selectedImage)?.title}</p>
-                <p className="text-xs sm:text-sm text-white/50">{filteredItems.find(item => item.id === selectedImage)?.category}</p>
+                <p className="text-sm sm:text-base text-white">{filteredItems.find(item => item._id === selectedImage)?.title}</p>
+                <p className="text-xs sm:text-sm text-white/50">{filteredItems.find(item => item._id === selectedImage)?.category}</p>
               </div>
             </div>
 

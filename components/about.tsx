@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Award, Users, Camera, Clock, Target, Sparkles } from "lucide-react";
 
 const features = [
@@ -29,50 +28,26 @@ export function About() {
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-          {/* Images - Masonry Style */}
+          {/* Images - Masonry Style Placeholders */}
           <div className="columns-2 gap-2 sm:gap-2">
             <div className="mb-2 sm:mb-2 break-inside-avoid">
-              <div className="relative overflow-hidden rounded-lg sm:rounded-lg group">
-                <Image
-                  src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=400&h=500&fit=crop"
-                  alt="Photographer at work"
-                  width={300}
-                  height={400}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+              <div className="relative overflow-hidden rounded-lg sm:rounded-lg aspect-[3/4] bg-secondary flex items-center justify-center">
+                <Camera className="h-8 w-8 text-amber-400/30" />
               </div>
             </div>
             <div className="mb-2 sm:mb-2 break-inside-avoid">
-              <div className="relative overflow-hidden rounded-lg sm:rounded-lg group">
-                <Image
-                  src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&h=300&fit=crop"
-                  alt="Camera equipment"
-                  width={300}
-                  height={200}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+              <div className="relative overflow-hidden rounded-lg sm:rounded-lg aspect-[4/3] bg-secondary flex items-center justify-center">
+                <Camera className="h-8 w-8 text-amber-400/30" />
               </div>
             </div>
             <div className="mb-2 sm:mb-2 break-inside-avoid">
-              <div className="relative overflow-hidden rounded-lg sm:rounded-lg group">
-                <Image
-                  src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=400&h=300&fit=crop"
-                  alt="Studio setup"
-                  width={300}
-                  height={200}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+              <div className="relative overflow-hidden rounded-lg sm:rounded-lg aspect-[4/3] bg-secondary flex items-center justify-center">
+                <Camera className="h-8 w-8 text-amber-400/30" />
               </div>
             </div>
             <div className="mb-2 sm:mb-2 break-inside-avoid">
-              <div className="relative overflow-hidden rounded-lg sm:rounded-lg group">
-                <Image
-                  src="https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=400&h=400&fit=crop"
-                  alt="Photo editing"
-                  width={300}
-                  height={300}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+              <div className="relative overflow-hidden rounded-lg sm:rounded-lg aspect-square bg-secondary flex items-center justify-center">
+                <Camera className="h-8 w-8 text-amber-400/30" />
               </div>
             </div>
           </div>

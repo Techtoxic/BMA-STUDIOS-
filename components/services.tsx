@@ -69,74 +69,7 @@ export function Services() {
     return () => observer.disconnect();
   }, [services]);
 
-  // Fallback hardcoded services if Sanity fails
-  const fallbackServices: Service[] = [
-    {
-      _id: "1",
-      title: "Wedding Photography",
-      subtitle: "Capture your special day",
-      price: "From KSH 45,000",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
-      icon: "Heart",
-      orientation: "portrait",
-    },
-    {
-      _id: "2",
-      title: "Studio Portraits",
-      subtitle: "Professional headshots & family",
-      price: "From KSH 3,500",
-      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80",
-      icon: "User",
-      orientation: "landscape",
-    },
-    {
-      _id: "3",
-      title: "Creative Photoshoots",
-      subtitle: "Fashion & lifestyle sessions",
-      price: "From KSH 8,000",
-      image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80",
-      icon: "Sparkles",
-      orientation: "portrait",
-    },
-    {
-      _id: "4",
-      title: "Photo Mounting",
-      subtitle: "Canvas, acrylic & frames",
-      price: "From KSH 1,500",
-      image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80",
-      icon: "ImageIcon",
-      orientation: "landscape",
-    },
-    {
-      _id: "5",
-      title: "Graphic Design",
-      subtitle: "Logos, branding & prints",
-      price: "From KSH 2,500",
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80",
-      icon: "Palette",
-      orientation: "landscape",
-    },
-    {
-      _id: "6",
-      title: "Brand Campaign",
-      subtitle: "Marketing & visual identity",
-      price: "From KSH 25,000",
-      image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=80",
-      icon: "Sparkles",
-      orientation: "landscape",
-    },
-    {
-      _id: "7",
-      title: "Editing Training",
-      subtitle: "Lightroom & Photoshop courses",
-      price: "From KSH 15,000",
-      image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80",
-      icon: "GraduationCap",
-      orientation: "portrait",
-    },
-  ];
-
-  const displayServices = services.length > 0 ? services : fallbackServices;
+  const displayServices = services;
 
   if (loading) {
     return (
@@ -153,6 +86,24 @@ export function Services() {
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin h-8 w-8 border-2 border-amber-400 border-t-transparent rounded-full" />
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (displayServices.length === 0) {
+    return (
+      <section id="services" className="relative py-6 md:py-12 overflow-hidden">
+        <div className="relative w-full px-6 sm:px-10 lg:px-16 xl:px-20">
+          <div className="text-center mb-8 md:mb-12">
+            <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
+              What We Offer
+            </p>
+            <h2 className="font-[var(--font-heading)] text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+              Our Services
+            </h2>
+          </div>
+          <p className="text-center text-muted-foreground text-sm">Coming soon</p>
         </div>
       </section>
     );
