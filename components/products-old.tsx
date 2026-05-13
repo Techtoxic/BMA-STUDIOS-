@@ -1,77 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Star, Tag } from "lucide-react";
-import { getProducts } from "@/lib/sanity";
 
-interface Product {
-  _id: string;
-  name: string;
-  category: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  inStock: boolean;
-  description?: string;
-  featured?: boolean;
-}
+const products = [
+  { id: 1, name: "Canon EOS R5", category: "Camera", price: 485000, originalPrice: 520000, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=500&fit=crop", rating: 4.9, inStock: true, orientation: "portrait" },
+  { id: 2, name: "Sony 24-70mm", category: "Lens", price: 165000, image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&h=300&fit=crop", rating: 4.8, inStock: true, orientation: "landscape" },
+  { id: 3, name: "Godox AD600", category: "Lighting", price: 78000, image: "https://images.unsplash.com/photo-1542567455-cd733f23fbb1?w=400&h=300&fit=crop", rating: 4.7, inStock: true, orientation: "landscape" },
+  { id: 4, name: "DJI RS 3 Pro", category: "Stabilizer", price: 125000, originalPrice: 145000, image: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=500&fit=crop", rating: 4.9, inStock: false, orientation: "portrait" },
+  { id: 5, name: "SanDisk 128GB", category: "Storage", price: 8500, image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=300&fit=crop", rating: 4.6, inStock: true, orientation: "landscape" },
+  { id: 6, name: "Manfrotto Tripod", category: "Support", price: 45000, image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=500&fit=crop", rating: 4.8, inStock: true, orientation: "portrait" },
+  { id: 7, name: "Peak Design Bag", category: "Bags", price: 32000, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop", rating: 4.7, inStock: true, orientation: "landscape" },
+  { id: 8, name: "Nikon Z6 II", category: "Camera", price: 298000, image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=500&fit=crop", rating: 4.8, inStock: true, orientation: "portrait" },
+];
 
 export function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch products from Sanity
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProducts();
-  }, []);
-
-  // Fallback products if Sanity fails
-  const fallbackProducts: Product[] = [
-    { _id: "1", name: "Canon EOS R5", category: "Camera", price: 485000, originalPrice: 520000, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=500&fit=crop", rating: 4.9, inStock: true },
-    { _id: "2", name: "Sony 24-70mm", category: "Lens", price: 165000, image: "https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&h=300&fit=crop", rating: 4.8, inStock: true },
-    { _id: "3", name: "Godox AD600", category: "Lighting", price: 78000, image: "https://images.unsplash.com/photo-1542567455-cd733f23fbb1?w=400&h=300&fit=crop", rating: 4.7, inStock: true },
-    { _id: "4", name: "DJI RS 3 Pro", category: "Stabilizer", price: 125000, originalPrice: 145000, image: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=500&fit=crop", rating: 4.9, inStock: false },
-    { _id: "5", name: "SanDisk 128GB", category: "Storage", price: 8500, image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=300&fit=crop", rating: 4.6, inStock: true },
-    { _id: "6", name: "Manfrotto Tripod", category: "Support", price: 45000, image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=500&fit=crop", rating: 4.8, inStock: true },
-    { _id: "7", name: "Peak Design Bag", category: "Bags", price: 32000, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop", rating: 4.7, inStock: true },
-    { _id: "8", name: "Nikon Z6 II", category: "Camera", price: 298000, image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=500&fit=crop", rating: 4.8, inStock: true },
-  ];
-
-  const displayProducts = products.length > 0 ? products : fallbackProducts;
-
-  if (loading) {
-    return (
-      <section id="products" className="py-6 sm:py-12 bg-secondary/30">
-        <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
-          <div className="mb-4 sm:mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-px w-6 sm:w-8 bg-amber-400" />
-              <span className="text-xs uppercase tracking-widest text-amber-400">Shop</span>
-            </div>
-            <h2 className="text-xl sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
-              Camera & Accessories
-            </h2>
-          </div>
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin h-8 w-8 border-2 border-amber-400 border-t-transparent rounded-full" />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section id="products" className="py-6 sm:py-12 bg-secondary/30">
       <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
@@ -88,9 +31,9 @@ export function Products() {
 
         {/* Masonry Grid */}
         <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-2">
-          {displayProducts.map((product) => (
+          {products.map((product) => (
             <div
-              key={product._id}
+              key={product.id}
               className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
             >
               <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
@@ -98,7 +41,7 @@ export function Products() {
                   src={product.image}
                   alt={product.name}
                   width={300}
-                  height={300}
+                  height={product.orientation === 'portrait' ? 400 : 200}
                   className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
