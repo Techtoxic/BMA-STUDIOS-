@@ -29,7 +29,8 @@ export default {
           { title: 'Event', value: 'event' },
           { title: 'Studio', value: 'studio' },
           { title: 'Creative', value: 'creative' },
-          { title: 'Product', value: 'product' }
+          { title: 'Product', value: 'product' },
+          { title: 'Outdoor', value: 'outdoor' }
         ]
       }
     },
