@@ -161,7 +161,7 @@ export function Services() {
         </div>
 
         {/* Bottom Showcase Images */}
-        <div className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 opacity-0 animate-fade-in delay-700" style={{ animationFillMode: "forwards" }}>
           <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=400&h=300&fit=crop"
