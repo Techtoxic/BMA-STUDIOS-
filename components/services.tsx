@@ -100,7 +100,7 @@ export function Services() {
               data-index={index}
               className={`group relative overflow-hidden rounded-xl md:rounded-2xl cursor-pointer ${
                 service.orientation === "portrait" 
-                  ? "row-span-2" 
+                  ? "md:row-span-2" 
                   : ""
               } ${visibleItems.includes(index) ? "opacity-100" : "opacity-0"} transition-all duration-500`}
               style={{

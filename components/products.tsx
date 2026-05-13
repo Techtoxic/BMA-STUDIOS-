@@ -19,24 +19,24 @@ export function Products() {
     <section id="products" className="py-6 sm:py-12 bg-secondary/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-3 sm:mb-6">
-          <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
-            <div className="h-px w-4 sm:w-8 bg-amber-400" />
-            <span className="text-[8px] sm:text-xs uppercase tracking-widest text-amber-400">Shop</span>
+        <div className="mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-px w-6 sm:w-8 bg-amber-400" />
+            <span className="text-xs uppercase tracking-widest text-amber-400">Shop</span>
           </div>
-          <h2 className="text-sm sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
+          <h2 className="text-xl sm:text-xl lg:text-2xl font-[var(--font-heading)] font-bold text-foreground">
             Camera & Accessories
           </h2>
         </div>
 
         {/* Masonry Grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-1 sm:gap-2">
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-2">
           {products.map((product) => (
             <div
               key={product.id}
-              className="mb-1 sm:mb-2 break-inside-avoid group cursor-pointer"
+              className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
             >
-              <div className="relative overflow-hidden rounded-md sm:rounded-lg">
+              <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -47,8 +47,8 @@ export function Products() {
                 
                 {/* Sale Badge */}
                 {product.originalPrice && (
-                  <div className="absolute top-1 left-1">
-                    <span className="px-1 py-0.5 text-[6px] sm:text-[8px] font-medium bg-amber-400 text-background rounded">
+                  <div className="absolute top-1.5 left-1.5">
+                    <span className="px-1.5 py-0.5 text-xs font-medium bg-amber-400 text-background rounded">
                       Sale
                     </span>
                   </div>
@@ -56,8 +56,8 @@ export function Products() {
 
                 {/* Stock Badge */}
                 {!product.inStock && (
-                  <div className="absolute top-1 right-1">
-                    <span className="px-1 py-0.5 text-[6px] sm:text-[8px] font-medium bg-red-500/80 text-white rounded">
+                  <div className="absolute top-1.5 right-1.5">
+                    <span className="px-1.5 py-0.5 text-xs font-medium bg-red-500/80 text-white rounded">
                       Sold
                     </span>
                   </div>
@@ -65,31 +65,31 @@ export function Products() {
                 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-1 sm:p-2">
-                    <p className="text-[8px] sm:text-[10px] font-medium text-white">{product.name}</p>
-                    <p className="text-[6px] sm:text-[8px] text-white/60">{product.category}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-2">
+                    <p className="text-xs font-medium text-white">{product.name}</p>
+                    <p className="text-xs text-white/60">{product.category}</p>
                     
-                    <div className="flex items-center justify-between mt-0.5 sm:mt-1">
-                      <div className="flex items-center gap-0.5">
-                        <span className="text-[8px] sm:text-[10px] font-semibold text-amber-400">
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-semibold text-amber-400">
                           KSH {product.price.toLocaleString()}
                         </span>
                         {product.originalPrice && (
-                          <span className="text-[6px] sm:text-[8px] text-white/40 line-through">
+                          <span className="text-xs text-white/40 line-through">
                             {product.originalPrice.toLocaleString()}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-0.5">
-                        <Star className="h-1.5 w-1.5 sm:h-2 sm:w-2 text-amber-400 fill-amber-400" />
-                        <span className="text-[6px] sm:text-[8px] text-white/70">{product.rating}</span>
+                        <Star className="h-2 w-2 sm:h-2 sm:w-2 text-amber-400 fill-amber-400" />
+                        <span className="text-xs text-white/70">{product.rating}</span>
                       </div>
                     </div>
 
                     {/* Add to Cart */}
                     {product.inStock && (
-                      <button className="mt-1 w-full flex items-center justify-center gap-0.5 py-0.5 text-[6px] sm:text-[8px] border border-amber-400/50 text-amber-400 rounded hover:bg-amber-400 hover:text-background transition-all duration-300">
-                        <ShoppingCart className="h-1.5 w-1.5 sm:h-2 sm:w-2" strokeWidth={1.5} />
+                      <button className="mt-1 w-full flex items-center justify-center gap-1 py-1 text-xs border border-amber-400/50 text-amber-400 rounded hover:bg-amber-400 hover:text-background transition-all duration-300">
+                        <ShoppingCart className="h-2 w-2 sm:h-2 sm:w-2" strokeWidth={1.5} />
                         <span>Add to Cart</span>
                       </button>
                     )}
@@ -101,12 +101,12 @@ export function Products() {
         </div>
 
         {/* View All Link */}
-        <div className="mt-3 sm:mt-6 text-center">
+        <div className="mt-4 sm:mt-6 text-center">
           <a
             href="#"
-            className="inline-flex items-center gap-1 text-[8px] sm:text-xs text-muted-foreground hover:text-amber-400 transition-colors"
+            className="inline-flex items-center gap-1 text-xs sm:text-xs text-muted-foreground hover:text-amber-400 transition-colors"
           >
-            <Tag className="h-2 w-2 sm:h-3 sm:w-3" strokeWidth={1.5} />
+            <Tag className="h-3 w-3 sm:h-3 sm:w-3" strokeWidth={1.5} />
             <span>View All Products</span>
           </a>
         </div>

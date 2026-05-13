@@ -189,7 +189,7 @@ export function Hero() {
       </div>
 
       {/* Bottom Section - Stats Left, Studio Name Right */}
-      <div className="relative z-10 mb-28 sm:mb-6">
+      <div className="relative z-10 mb-8 sm:mb-6">
         <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1.5 sm:gap-6">
             
