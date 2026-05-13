@@ -94,78 +94,78 @@ export function Products() {
           </h2>
         </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-2">
+        {/* Product Grid - Compact Cards */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1.5 sm:gap-2">
           {displayProducts.map((product) => (
             <div
               key={product._id}
-              className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
+              className="group cursor-pointer"
             >
-              <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
+              {/* Image */}
+              <div className="relative overflow-hidden rounded-md sm:rounded-lg">
                 <div className="relative aspect-[3/4] w-full">
-                <Image
-                  src={
-                    product.image?.asset?._ref
-                      ? urlFor(product.image).width(400).height(500).fit('crop').auto('format').quality(80).url()
-                      : product.imageUrl || product.image
-                  }
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                
-                {/* Sale Badge */}
-                {product.originalPrice && (
-                  <div className="absolute top-1.5 left-1.5">
-                    <span className="px-1.5 py-0.5 text-xs font-medium bg-amber-400 text-background rounded">
-                      Sale
-                    </span>
-                  </div>
-                )}
+                  <Image
+                    src={
+                      product.image?.asset?._ref
+                        ? urlFor(product.image).width(300).height(400).fit('crop').auto('format').quality(80).url()
+                        : product.imageUrl || product.image
+                    }
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
 
-                {/* Stock Badge */}
-                {!product.inStock && (
-                  <div className="absolute top-1.5 right-1.5">
-                    <span className="px-1.5 py-0.5 text-xs font-medium bg-red-500/80 text-white rounded">
-                      Sold
-                    </span>
-                  </div>
-                )}
-                
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-2">
-                    <p className="text-xs font-medium text-white">{product.name}</p>
-                    <p className="text-xs text-white/60">{product.category}</p>
-                    
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs font-semibold text-amber-400">
-                          KSH {product.price.toLocaleString()}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-xs text-white/40 line-through">
-                            {product.originalPrice.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-0.5">
-                        <Star className="h-2 w-2 sm:h-2 sm:w-2 text-amber-400 fill-amber-400" />
-                        <span className="text-xs text-white/70">{product.rating}</span>
-                      </div>
+                  {/* Sale Badge */}
+                  {product.originalPrice && (
+                    <div className="absolute top-1 left-1">
+                      <span className="px-1 py-0.5 text-[8px] sm:text-[9px] font-medium bg-amber-400 text-background rounded">
+                        Sale
+                      </span>
                     </div>
+                  )}
 
-                    {/* Add to Cart */}
-                    {product.inStock && (
-                      <button className="mt-1 w-full flex items-center justify-center gap-1 py-1 text-xs border border-amber-400/50 text-amber-400 rounded hover:bg-amber-400 hover:text-background transition-all duration-300">
-                        <ShoppingCart className="h-2 w-2 sm:h-2 sm:w-2" strokeWidth={1.5} />
-                        <span>Add to Cart</span>
-                      </button>
-                    )}
+                  {/* Stock Badge */}
+                  {!product.inStock && (
+                    <div className="absolute top-1 right-1">
+                      <span className="px-1 py-0.5 text-[8px] sm:text-[9px] font-medium bg-red-500/80 text-white rounded">
+                        Sold
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Hover Overlay - desktop only */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5">
+                      {product.inStock && (
+                        <button className="w-full flex items-center justify-center gap-1 py-0.5 text-[9px] border border-amber-400/50 text-amber-400 rounded hover:bg-amber-400 hover:text-background transition-all duration-300">
+                          <ShoppingCart className="h-2 w-2" strokeWidth={1.5} />
+                          <span>Add to Cart</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Info below image */}
+              <div className="mt-1 px-0.5">
+                <p className="text-[10px] sm:text-xs font-medium text-foreground truncate">{product.name}</p>
+                <p className="text-[8px] sm:text-[10px] text-muted-foreground truncate">{product.category}</p>
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-[10px] sm:text-xs font-semibold text-amber-400">
+                    KSH {product.price.toLocaleString()}
+                  </span>
+                  <div className="flex items-center gap-0.5">
+                    <Star className="h-2 w-2 text-amber-400 fill-amber-400" />
+                    <span className="text-[8px] sm:text-[10px] text-muted-foreground">{product.rating}</span>
+                  </div>
                 </div>
+                {product.originalPrice && (
+                  <span className="text-[8px] sm:text-[9px] text-muted-foreground line-through">
+                    KSH {product.originalPrice.toLocaleString()}
+                  </span>
+                )}
               </div>
             </div>
           ))}
