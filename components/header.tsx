@@ -29,11 +29,11 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-background/95 backdrop-blur-md py-3 shadow-lg shadow-black/20"
-          : "bg-transparent py-5"
+          ? "bg-background/95 backdrop-blur-md shadow-lg shadow-black/20"
+          : "bg-transparent"
       }`}
     >
-      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
+      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="#home" className="flex items-center gap-2 group">
