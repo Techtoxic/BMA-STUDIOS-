@@ -74,7 +74,7 @@ export function Hero() {
               {/* Left Side - Main Headline */}
               <div className="lg:flex-1 lg:max-w-2xl">
                 <h1 
-                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-[5.5rem] xl:text-8xl font-bold leading-[1.1] mb-8 sm:mb-6"
+                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-8 sm:mb-6"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-foreground">Capturing Your</span>
@@ -87,15 +87,15 @@ export function Hero() {
                   className="opacity-0 animate-slide-in-left delay-200 mb-5 sm:mb-4 flex items-center flex-wrap"
                   style={{ animationFillMode: "forwards" }}
                 >
-                  <span className="text-sm sm:text-lg text-muted-foreground">We specialize in </span>
-                  <span className="text-sm sm:text-lg text-amber-400 font-semibold ml-1">
+                  <span className="text-sm sm:text-base text-muted-foreground">We specialize in </span>
+                  <span className="text-sm sm:text-base text-amber-400 font-semibold ml-1">
                     {displayText}
                     <span className="animate-pulse">|</span>
                   </span>
                 </div>
 
                 <p 
-                  className="opacity-0 animate-slide-in-left delay-300 mb-10 sm:mb-8 max-w-xl text-base sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed"
+                  className="opacity-0 animate-slide-in-left delay-300 mb-10 sm:mb-8 max-w-lg text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed"
                   style={{ animationFillMode: "forwards" }}
                 >
                   Professional photography services in Nyeri, Kenya. Transform your special 
@@ -109,14 +109,14 @@ export function Hero() {
                 >
                   <a
                     href="#services"
-                    className="inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-400/10 px-5 sm:px-7 py-2.5 sm:py-3.5 text-sm sm:text-base font-medium text-amber-400 transition-all duration-300 hover:bg-amber-400/20 hover:border-amber-400"
+                    className="inline-flex items-center gap-2 rounded-full border border-amber-400/60 bg-amber-400/10 px-5 py-2.5 text-sm font-medium text-amber-400 transition-all duration-300 hover:bg-amber-400/20 hover:border-amber-400"
                   >
                     <span>Explore Services</span>
                     <ChevronDown className="h-4 w-4" />
                   </a>
                   <a
                     href="tel:+254725297393"
-                    className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-5 sm:px-7 py-2.5 sm:py-3.5 text-sm sm:text-base font-medium text-foreground transition-all duration-300 hover:border-foreground/40 hover:bg-foreground/5"
+                    className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-foreground/40 hover:bg-foreground/5"
                   >
                     <Phone className="h-4 w-4" />
                     <span>Call Now</span>
