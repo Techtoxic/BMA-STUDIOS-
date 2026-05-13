@@ -148,21 +148,23 @@ export function Portfolio() {
         {/* ===== CATEGORY CARDS VIEW ===== */}
         {!openCategory && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {categoryNames.map((catName) => {
+            {categoryNames.map((catName, catIndex) => {
               const items = categoryMap[catName];
               const previewItems = items.slice(0, 3);
 
               return (
                 <div
                   key={catName}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer transition-all duration-500 hover:-translate-y-2"
                   onClick={() => setOpenCategory(catName)}
+                  style={{ animationDelay: `${catIndex * 100}ms` }}
                 >
                   {/* Stacked cards */}
-                  <div className="relative aspect-[3/4]">
+                  <div className="relative aspect-[3/4] transition-all duration-500 group-hover:shadow-[0_8px_30px_rgba(245,158,11,0.15)]  rounded-xl">
                     {previewItems.map((item, i) => {
                       const total = previewItems.length;
                       const rotation = i === 0 ? -3 : i === 1 ? 0 : 3;
+                      const hoverRotation = i === 0 ? -6 : i === 1 ? 0 : 6;
                       const translateY = i === 0 ? 4 : i === 1 ? 0 : 4;
                       const scale = i === 1 ? 1 : 0.95;
                       const zIndex = i === 1 ? 3 : i === 0 ? 1 : 2;
@@ -170,10 +172,16 @@ export function Portfolio() {
                       return (
                         <div
                           key={item._id}
-                          className="absolute inset-0 overflow-hidden rounded-lg sm:rounded-xl shadow-lg transition-all duration-500 group-hover:shadow-xl"
+                          className="absolute inset-0 overflow-hidden rounded-lg sm:rounded-xl shadow-lg transition-all duration-500 ease-out group-hover:shadow-2xl"
                           style={{
                             transform: `rotate(${rotation}deg) translateY(${translateY}px) scale(${scale})`,
                             zIndex,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = `rotate(${hoverRotation}deg) translateY(${i === 1 ? -4 : 6}px) scale(${i === 1 ? 1.02 : 0.93})`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = `rotate(${rotation}deg) translateY(${translateY}px) scale(${scale})`;
                           }}
                         >
                           <Image
@@ -181,7 +189,7 @@ export function Portfolio() {
                             alt={item.title}
                             fill
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           {i === (total > 1 ? 1 : 0) && (
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -191,18 +199,28 @@ export function Portfolio() {
                     })}
 
                     {/* Count badge */}
-                    <div className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Layers className="h-2.5 w-2.5 text-amber-400" />
-                      <span className="text-[9px] text-white font-medium">{items.length}</span>
+                    <div className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 transition-all duration-300 group-hover:bg-amber-400/90 group-hover:scale-110">
+                      <Layers className="h-2.5 w-2.5 text-amber-400 group-hover:text-background transition-colors" />
+                      <span className="text-[9px] text-white font-medium group-hover:text-background transition-colors">{items.length}</span>
+                    </div>
+
+                    {/* Hover border glow */}
+                    <div className="absolute inset-0 rounded-lg sm:rounded-xl border-2 border-transparent group-hover:border-amber-400/40 transition-all duration-500 z-[4] pointer-events-none" />
+
+                    {/* Browse label on hover */}
+                    <div className="absolute inset-0 z-[5] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                      <span className="px-3 py-1.5 bg-black/70 backdrop-blur-sm text-amber-400 text-[10px] sm:text-xs font-medium rounded-full border border-amber-400/30">
+                        Browse →
+                      </span>
                     </div>
                   </div>
 
                   {/* Label */}
                   <div className="mt-2 text-center">
-                    <p className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-amber-400 transition-colors capitalize">
+                    <p className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-amber-400 transition-colors duration-300 capitalize">
                       {catName}
                     </p>
-                    <p className="text-[9px] sm:text-[10px] text-muted-foreground">
+                    <p className="text-[9px] sm:text-[10px] text-muted-foreground group-hover:text-amber-400/60 transition-colors duration-300">
                       {items.length} {items.length === 1 ? "photo" : "photos"}
                     </p>
                   </div>
