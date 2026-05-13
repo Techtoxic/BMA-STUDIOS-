@@ -74,7 +74,7 @@ export function Hero() {
               {/* Left Side - Main Headline */}
               <div className="lg:flex-1 lg:max-w-2xl">
                 <h1 
-                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-3 sm:mb-4"
+                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 sm:mb-4"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-foreground">Capturing Your</span>
@@ -84,7 +84,7 @@ export function Hero() {
 
                 {/* Typing Effect */}
                 <div 
-                  className="opacity-0 animate-slide-in-left delay-200 mb-3 sm:mb-4 flex items-center flex-wrap"
+                  className="opacity-0 animate-slide-in-left delay-200 mb-5 sm:mb-4 flex items-center flex-wrap"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-sm text-muted-foreground">We specialize in </span>
@@ -95,7 +95,7 @@ export function Hero() {
                 </div>
 
                 <p 
-                  className="opacity-0 animate-slide-in-left delay-300 mb-5 sm:mb-6 max-w-md text-sm text-muted-foreground leading-relaxed"
+                  className="opacity-0 animate-slide-in-left delay-300 mb-8 sm:mb-6 max-w-md text-sm sm:text-base text-muted-foreground leading-relaxed"
                   style={{ animationFillMode: "forwards" }}
                 >
                   Professional photography services in Nyeri, Kenya. Transform your special 
@@ -104,7 +104,7 @@ export function Hero() {
 
                 {/* CTA Buttons */}
                 <div 
-                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-3"
+                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-4 sm:gap-3"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <a
