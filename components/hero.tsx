@@ -50,32 +50,24 @@ export function Hero() {
 
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
-      {/* Video Background */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="h-full w-full object-cover"
-          poster="https://images.unsplash.com/photo-1493863641943-9b68992a8db7?w=1920&q=80"
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-photographer-taking-photos-at-a-wedding-3397-large.mp4"
-            type="video/mp4"
-          />
-        </video>
+        <div 
+          className="h-full w-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1920&q=80')`
+          }}
+        />
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/50" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
       </div>
 
-      {/* Content Container - Properly Distributed */}
-      <div className="relative z-10 flex-1 flex flex-col">
+      {/* Content Container */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center">
         
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col justify-center pt-24 sm:pt-20 pb-6">
+        {/* Main Content Area - No flex-1 to prevent pushing stats down */}
+        <div className="pt-24 sm:pt-20 pb-4">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
               
@@ -153,8 +145,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Fixed at Bottom */}
-        <div className="relative z-10 pb-4 sm:pb-6">
+        {/* Stats Section - Sits right below content */}
+        <div className="pb-4 sm:pb-6">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
               
