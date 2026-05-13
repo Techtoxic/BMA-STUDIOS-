@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Star, Tag } from "lucide-react";
-import { getProducts } from "@/lib/sanity";
+import { getProducts, urlFor } from "@/lib/sanity";
 
 interface Product {
   _id: string;
@@ -11,7 +11,8 @@ interface Product {
   category: string;
   price: number;
   originalPrice?: number;
-  image: string;
+  image: any;
+  imageUrl?: string;
   rating: number;
   inStock: boolean;
   description?: string;
@@ -94,12 +95,17 @@ export function Products() {
               className="mb-2 sm:mb-2 break-inside-avoid group cursor-pointer"
             >
               <div className="relative overflow-hidden rounded-lg sm:rounded-lg">
+                <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src={product.image}
+                  src={
+                    product.image?.asset
+                      ? urlFor(product.image).width(400).height(500).fit('crop').auto('format').quality(80).url()
+                      : product.imageUrl || product.image
+                  }
                   alt={product.name}
-                  width={300}
-                  height={300}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
                 {/* Sale Badge */}
@@ -151,6 +157,7 @@ export function Products() {
                       </button>
                     )}
                   </div>
+                </div>
                 </div>
               </div>
             </div>

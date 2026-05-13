@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart, User, Sparkles, Image as ImageIcon, Palette, GraduationCap, ArrowRight } from "lucide-react";
-import { getServices } from "@/lib/sanity";
+import { getServices, urlFor } from "@/lib/sanity";
 
 // Icon mapping for dynamic icons
 const iconMap: { [key: string]: React.ElementType } = {
@@ -22,7 +22,8 @@ interface Service {
   title: string;
   subtitle: string;
   price: string;
-  image: string;
+  image: any;
+  imageUrl?: string;
   icon: string;
   orientation: string;
 }
@@ -195,9 +196,14 @@ export function Services() {
                     : "aspect-[4/3] md:aspect-[3/2]"
                 }`}>
                   <Image
-                    src={service.image}
+                    src={
+                      service.image?.asset
+                        ? urlFor(service.image).width(600).height(service.orientation === 'portrait' ? 800 : 400).fit('crop').auto('format').quality(80).url()
+                        : service.imageUrl || service.image
+                    }
                     alt={service.title}
                     fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   
