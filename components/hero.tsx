@@ -1,9 +1,59 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Phone, MapPin } from "lucide-react";
 import { getHero, urlFor } from "@/lib/sanity";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+const LINE1 = "Capturing Your";
+const LINE2 = "Precious Moments";
+
+function useTypingEffect() {
+  const [line1, setLine1] = useState("");
+  const [line2, setLine2] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+  const [done, setDone] = useState(false);
+  const frame = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    let i = 0;
+    let j = 0;
+    let phase: "line1" | "pause" | "line2" | "blink" = "line1";
+
+    const tick = () => {
+      if (phase === "line1") {
+        i++;
+        setLine1(LINE1.slice(0, i));
+        if (i >= LINE1.length) { phase = "pause"; frame.current = setTimeout(tick, 320); }
+        else frame.current = setTimeout(tick, 68);
+      } else if (phase === "pause") {
+        phase = "line2";
+        frame.current = setTimeout(tick, 60);
+      } else if (phase === "line2") {
+        j++;
+        setLine2(LINE2.slice(0, j));
+        if (j >= LINE2.length) { phase = "blink"; frame.current = setTimeout(tick, 500); }
+        else frame.current = setTimeout(tick, 72);
+      } else {
+        // blink cursor 3 times then hide
+        let blinks = 0;
+        const blink = () => {
+          setShowCursor(c => !c);
+          blinks++;
+          if (blinks < 6) frame.current = setTimeout(blink, 380);
+          else { setShowCursor(false); setDone(true); }
+        };
+        blink();
+      }
+    };
+
+    // small initial delay so page loads first
+    frame.current = setTimeout(tick, 600);
+    return () => clearTimeout(frame.current);
+  }, []);
+
+  return { line1, line2, showCursor, done };
+}
 
 const MOBILE_BG =
   "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80";
@@ -23,6 +73,7 @@ interface HeroData {
 export function Hero() {
   const [heroData, setHeroData] = useState<HeroData | null>(null);
   const isMobile = useIsMobile();
+  const { line1, line2, showCursor, done } = useTypingEffect();
 
   useEffect(() => {
     async function fetchHero() {
@@ -77,12 +128,22 @@ export function Hero() {
 
         {/* Headline */}
         <h1
-          className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-[2rem] leading-[1.1] font-bold sm:text-5xl lg:text-7xl mb-4"
-          style={{ animationFillMode: "forwards" }}
+          className="font-[var(--font-heading)] text-[2rem] leading-[1.1] font-bold sm:text-5xl lg:text-7xl mb-4"
         >
-          <span className="text-white">Capturing Your</span>
-          <br />
-          <span className="gradient-text">Precious Moments</span>
+          <span className="text-white">{line1}</span>
+          {line1.length >= LINE1.length && (
+            <>
+              <br />
+              <span className="gradient-text">{line2}</span>
+            </>
+          )}
+          {/* blinking cursor */}
+          {!done && (
+            <span
+              className="inline-block w-[3px] sm:w-[4px] lg:w-[5px] h-[1em] ml-1 align-middle rounded-sm bg-amber-400"
+              style={{ opacity: showCursor ? 1 : 0, transition: "opacity 0.1s" }}
+            />
+          )}
         </h1>
 
         {/* Tagline */}
