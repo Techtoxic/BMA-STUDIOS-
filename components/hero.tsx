@@ -3,6 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, MapPin, Phone, Clock, Camera } from "lucide-react";
 import { getHero, urlFor } from "@/lib/sanity";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+// High-quality camera image for mobile hero background
+const MOBILE_BG_IMAGE =
+  "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80";
 
 const typewriterTexts = [
   "Wedding Photography",
@@ -28,6 +33,7 @@ export function Hero() {
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [heroData, setHeroData] = useState<HeroData | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (videoRef.current) {
@@ -71,19 +77,23 @@ export function Hero() {
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, currentTextIndex]);
 
+  // Determine background image: camera photo on mobile, existing image on desktop
+  const desktopBg =
+    heroData?.backgroundImage?.asset?._ref || heroData?.backgroundImage?.asset?._id
+      ? `url('${urlFor(heroData.backgroundImage).width(1920).height(1080).fit("crop").auto("format").quality(80).url()}')`
+      : heroData?.backgroundImageUrl
+      ? `url('${heroData.backgroundImageUrl}')`
+      : "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)";
+
+  const backgroundImage = isMobile ? `url('${MOBILE_BG_IMAGE}')` : desktopBg;
+
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="h-full w-full bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: heroData?.backgroundImage?.asset?._ref || heroData?.backgroundImage?.asset?._id
-              ? `url('${urlFor(heroData.backgroundImage).width(1920).height(1080).fit('crop').auto('format').quality(80).url()}')`
-              : heroData?.backgroundImageUrl
-                ? `url('${heroData.backgroundImageUrl}')`
-                : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-          }}
+        <div
+          className="h-full w-full bg-cover bg-center bg-no-repeat transition-all duration-700"
+          style={{ backgroundImage }}
         />
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/50" />
@@ -92,16 +102,17 @@ export function Hero() {
 
       {/* Content Container */}
       <div className="relative z-10 flex-1 flex flex-col">
-        
-        {/* Main Content Area - Push down on desktop */}
-        <div className="pt-44 sm:pt-56 lg:pt-60 pb-4">
+
+        {/* Main Content Area */}
+        {/* Mobile: pt-24 (96px) — Desktop: pt-56/60 */}
+        <div className="pt-24 sm:pt-56 lg:pt-60 pb-2 sm:pb-4">
           <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-12">
-              
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-12">
+
               {/* Left Side - Main Headline */}
               <div className="lg:flex-1 lg:max-w-2xl">
-                <h1 
-                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-8 sm:mb-6"
+                <h1
+                  className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 sm:mb-6"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-foreground">Capturing Your</span>
@@ -110,8 +121,8 @@ export function Hero() {
                 </h1>
 
                 {/* Typing Effect */}
-                <div 
-                  className="opacity-0 animate-slide-in-left delay-200 mb-5 sm:mb-4 flex items-center flex-wrap"
+                <div
+                  className="opacity-0 animate-slide-in-left delay-200 mb-3 sm:mb-4 flex items-center flex-wrap"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <span className="text-sm sm:text-base text-muted-foreground">We specialize in </span>
@@ -121,17 +132,17 @@ export function Hero() {
                   </span>
                 </div>
 
-                <p 
-                  className="opacity-0 animate-slide-in-left delay-300 mb-10 sm:mb-8 max-w-lg text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed"
+                <p
+                  className="opacity-0 animate-slide-in-left delay-300 mb-5 sm:mb-8 max-w-lg text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed"
                   style={{ animationFillMode: "forwards" }}
                 >
-                  Professional photography services in Nyeri, Kenya. Transform your special 
+                  Professional photography services in Nyeri, Kenya. Transform your special
                   moments into timeless memories with artistic excellence.
                 </p>
 
                 {/* CTA Buttons */}
-                <div 
-                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-5 sm:gap-4"
+                <div
+                  className="opacity-0 animate-slide-in-left delay-400 flex flex-wrap items-center gap-3 sm:gap-4"
                   style={{ animationFillMode: "forwards" }}
                 >
                   <a
@@ -150,22 +161,19 @@ export function Hero() {
                   </a>
                 </div>
 
-                {/* Mobile Only - Service Tags to fill space */}
-                <div className="sm:hidden mt-10 opacity-0 animate-fade-in delay-500" style={{ animationFillMode: "forwards" }}>
-                  <div className="flex flex-wrap gap-2 mb-6">
+                {/* Mobile Only - Service Tags */}
+                <div className="sm:hidden mt-5 opacity-0 animate-fade-in delay-500" style={{ animationFillMode: "forwards" }}>
+                  <div className="flex flex-wrap gap-2">
                     <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Weddings</span>
                     <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Portraits</span>
                     <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Events</span>
                     <span className="px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs text-amber-400">Studio</span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Professional photography & videography services. We capture your most precious moments with artistic excellence.
-                  </p>
                 </div>
               </div>
 
               {/* Right Side - Description Card (Desktop Only) */}
-              <div 
+              <div
                 className="hidden lg:block lg:flex-1 lg:max-w-md opacity-0 animate-slide-in-right delay-500"
                 style={{ animationFillMode: "forwards" }}
               >
@@ -185,13 +193,13 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Stats Section - Up on mobile, down on desktop */}
+        {/* Stats Section */}
         <div className="pt-4 sm:pt-16 pb-4 sm:pb-6">
           <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
-              
+
               {/* Left - Stats */}
-              <div 
+              <div
                 className="opacity-0 animate-fade-in delay-600"
                 style={{ animationFillMode: "forwards" }}
               >
@@ -219,7 +227,7 @@ export function Hero() {
               </div>
 
               {/* Right - Studio Info */}
-              <div 
+              <div
                 className="opacity-0 animate-fade-in delay-700"
                 style={{ animationFillMode: "forwards" }}
               >
