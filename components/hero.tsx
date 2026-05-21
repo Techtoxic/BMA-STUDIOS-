@@ -95,9 +95,9 @@ export function Hero() {
           className="h-full w-full bg-cover bg-center bg-no-repeat transition-all duration-700"
           style={{ backgroundImage }}
         />
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/50" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
+        {/* Gradient Overlays - lighter on mobile so camera image shows through */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
       </div>
 
       {/* Content Container */}
@@ -194,7 +194,7 @@ export function Hero() {
         </div>
 
         {/* Stats Section */}
-        <div className="pt-4 sm:pt-16 pb-10 sm:pb-6">
+        <div className="pt-4 sm:pt-16 pb-5 sm:pb-6">
           <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
 

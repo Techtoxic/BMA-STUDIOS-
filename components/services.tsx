@@ -73,7 +73,7 @@ export function Services() {
 
   if (loading) {
     return (
-      <section id="services" className="relative py-6 md:py-12 overflow-hidden">
+      <section id="services" className="relative pt-0 pb-6 md:py-12 overflow-hidden">
         <div className="relative w-full px-6 sm:px-10 lg:px-16 xl:px-20">
           <div className="text-center mb-8 md:mb-12">
             <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
@@ -93,7 +93,7 @@ export function Services() {
 
   if (displayServices.length === 0) {
     return (
-      <section id="services" className="relative py-6 md:py-12 overflow-hidden">
+      <section id="services" className="relative pt-0 pb-6 md:py-12 overflow-hidden">
         <div className="relative w-full px-6 sm:px-10 lg:px-16 xl:px-20">
           <div className="text-center mb-8 md:mb-12">
             <p className="mb-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-amber-400">
@@ -110,7 +110,7 @@ export function Services() {
   }
 
   return (
-    <section id="services" ref={sectionRef} className="relative py-6 md:py-12 overflow-hidden">
+    <section id="services" ref={sectionRef} className="relative pt-0 pb-6 md:py-12 overflow-hidden">
       <div className="relative w-full px-6 sm:px-10 lg:px-16 xl:px-20">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
