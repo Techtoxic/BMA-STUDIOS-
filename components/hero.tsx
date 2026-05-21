@@ -61,8 +61,8 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
       </div>
 
-      {/* ── Content — anchored to bottom ── */}
-      <div className="relative z-10 mt-auto px-6 pb-10 sm:px-10 lg:px-16 xl:px-20 pt-24">
+      {/* ── Content — sits at lower-middle, not pinned to very bottom ── */}
+      <div className="relative z-10 mt-auto px-6 pb-10 sm:px-10 lg:px-16 xl:px-20 pt-20">
 
         {/* Location badge */}
         <div
