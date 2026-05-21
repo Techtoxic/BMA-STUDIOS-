@@ -25,8 +25,7 @@ function generateOrderId() {
   return `BMA-${timestamp}-${random}`
 }
 
-// ResultCodes that are definitively final failures (user cancelled, wrong PIN, etc.)
-// Anything NOT in this list is treated as "still processing" — keep polling
+// ResultCodes that are definitively final failures
 const FINAL_FAILURE_CODES = new Set(['1032', '2001', '1025', '1037'])
 
 export function MpesaModal({ product, onClose }: MpesaModalProps) {
@@ -48,6 +47,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
     const newOrderId = generateOrderId()
     setOrderId(newOrderId)
 
+    // Save as pending (no checkoutRequestId yet)
     await saveOrder({
       orderId: newOrderId,
       productId: product._id,
@@ -70,11 +70,23 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
       return
     }
 
+    const checkoutRequestId = data.CheckoutRequestID
+
+    // Re-save with checkoutRequestId so the callback can find this order
+    await saveOrder({
+      orderId: newOrderId,
+      productId: product._id,
+      productName: product.name,
+      amount: product.price,
+      phone: phone.trim(),
+      checkoutRequestId,
+      status: 'pending',
+    })
+
     setLoading(false)
     setStep('waiting')
 
     let attempts = 0
-    const checkoutRequestId = data.CheckoutRequestID
 
     // Poll every 5s for up to 2 minutes (24 attempts)
     const timer = setInterval(async () => {
@@ -88,6 +100,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           productName: product.name,
           amount: product.price,
           phone: phone.trim(),
+          checkoutRequestId,
           status: 'failed',
         })
         setStep('error')
@@ -98,13 +111,11 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
       const { data: queryData, error: queryError } = await queryStkPush(checkoutRequestId)
 
       if (queryError) {
-        // 500.001.1001 = STK push still pending (user hasn't entered PIN yet) — keep polling
-        // Any other query-level error = keep polling too (network blip, Daraja lag)
+        // 500.001.1001 = still pending, any error = keep polling
         return
       }
 
       if (queryData?.ResultCode === '0') {
-        // ✅ Confirmed success
         clearInterval(timer)
         await saveOrder({
           orderId: newOrderId,
@@ -112,6 +123,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           productName: product.name,
           amount: product.price,
           phone: phone.trim(),
+          checkoutRequestId,
           mpesaReceiptNumber: queryData?.MpesaReceiptNumber,
           status: 'confirmed',
         })
@@ -120,7 +132,6 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
       }
 
       if (queryData?.ResultCode && FINAL_FAILURE_CODES.has(queryData.ResultCode)) {
-        // ❌ Definitive failure: user cancelled (1032), wrong PIN (2001), etc.
         clearInterval(timer)
         setStep('error')
         setErrorMsg(
@@ -136,12 +147,13 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           productName: product.name,
           amount: product.price,
           phone: phone.trim(),
+          checkoutRequestId,
           status: 'failed',
         })
         return
       }
 
-      // Any other ResultCode (including "still under processing") = keep polling
+      // Any other ResultCode = keep polling (intermediate state)
     }, 5000)
   }
 
@@ -156,7 +168,6 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
         style={{ background: '#000000', border: '1px solid rgba(255,255,255,0.08)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         {step !== 'waiting' && (
           <button
             onClick={onClose}
@@ -202,22 +213,12 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 <input
                   type="tel"
                   value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value)
-                    setErrorMsg('')
-                  }}
+                  onChange={(e) => { setPhone(e.target.value); setErrorMsg('') }}
                   placeholder="e.g. 0712345678"
                   className="w-full rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 outline-none transition-all"
-                  style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                  }}
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
                 />
                 {errorMsg && <p className="text-xs text-red-400 mt-1.5">{errorMsg}</p>}
               </div>
@@ -236,23 +237,13 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 disabled={loading || !phone}
                 className="w-full flex items-center justify-center gap-2 py-3 font-semibold text-sm rounded-xl transition-all duration-200 text-white disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ background: loading || !phone ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}
-                onMouseEnter={(e) => {
-                  if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.16)'
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)'
-                }}
+                onMouseEnter={(e) => { if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.16)' }}
+                onMouseLeave={(e) => { if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)' }}
               >
                 {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Sending prompt...
-                  </>
+                  <><Loader2 className="h-4 w-4 animate-spin" />Sending prompt...</>
                 ) : (
-                  <>
-                    <Smartphone className="h-4 w-4" />
-                    Pay KSH {product.price.toLocaleString()} via M-Pesa
-                  </>
+                  <><Smartphone className="h-4 w-4" />Pay KSH {product.price.toLocaleString()} via M-Pesa</>
                 )}
               </button>
             </div>
@@ -262,22 +253,14 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           {step === 'waiting' && (
             <div className="text-center py-4 space-y-4">
               <div className="relative mx-auto w-16 h-16">
-                <div
-                  className="absolute inset-0 rounded-full animate-ping"
-                  style={{ border: '1px solid rgba(255,255,255,0.12)' }}
-                />
-                <div
-                  className="relative h-16 w-16 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(255,255,255,0.05)' }}
-                >
+                <div className="absolute inset-0 rounded-full animate-ping" style={{ border: '1px solid rgba(255,255,255,0.12)' }} />
+                <div className="relative h-16 w-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.05)' }}>
                   <Smartphone className="h-7 w-7 text-white/60" />
                 </div>
               </div>
               <div>
                 <p className="text-white font-semibold text-sm">Check your phone!</p>
-                <p className="text-xs text-white/40 mt-1">
-                  M-Pesa prompt sent to <span className="text-white/80">{phone}</span>
-                </p>
+                <p className="text-xs text-white/40 mt-1">M-Pesa prompt sent to <span className="text-white/80">{phone}</span></p>
                 <p className="text-xs text-white/40 mt-1">Enter your PIN to complete payment</p>
               </div>
               <div className="flex items-center justify-center gap-2 text-xs text-white/30">
@@ -290,10 +273,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           {/* STEP: Success */}
           {step === 'success' && (
             <div className="text-center py-4 space-y-4">
-              <div
-                className="mx-auto w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.15)' }}
-              >
+              <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.15)' }}>
                 <CheckCircle className="h-8 w-8 text-green-400" />
               </div>
               <div>
@@ -301,16 +281,11 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 <p className="text-xs text-white/40 mt-1">{product.name}</p>
                 <p className="text-white font-bold mt-1">KSH {product.price.toLocaleString()}</p>
               </div>
-
-              <div
-                className="rounded-xl p-3 text-left space-y-1"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
-              >
+              <div className="rounded-xl p-3 text-left space-y-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <p className="text-xs text-white/40">Order ID</p>
                 <p className="text-sm font-mono font-bold text-white">{orderId}</p>
                 <p className="text-[10px] text-white/30">Screenshot this for your records</p>
               </div>
-
               <a
                 href={`https://wa.me/254725297393?text=Hi BMA Studios! I just placed an order.%0AOrder ID: ${orderId}%0AProduct: ${product.name}%0AAmount: KSH ${product.price.toLocaleString()}%0APhone: ${phone}`}
                 target="_blank"
@@ -320,7 +295,6 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
               >
                 Message BMA Studios on WhatsApp
               </a>
-
               <button
                 onClick={onClose}
                 className="w-full py-2.5 text-white/40 hover:text-white/70 text-sm rounded-xl transition-all"
@@ -334,10 +308,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           {/* STEP: Error */}
           {step === 'error' && (
             <div className="text-center py-4 space-y-4">
-              <div
-                className="mx-auto w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.15)' }}
-              >
+              <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.15)' }}>
                 <X className="h-8 w-8 text-red-400" />
               </div>
               <div>
