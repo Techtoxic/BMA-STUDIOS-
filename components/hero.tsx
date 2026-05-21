@@ -100,7 +100,7 @@ export function Hero() {
         >
           <a
             href="#services"
-            className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-black transition-all duration-200 hover:bg-amber-300 active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-6 py-3 text-sm font-medium text-white/80 transition-all duration-200 hover:bg-white/15 hover:text-white active:scale-95"
           >
             Our Services
           </a>

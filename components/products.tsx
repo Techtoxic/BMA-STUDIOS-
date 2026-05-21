@@ -134,17 +134,8 @@ export function Products() {
                     </div>
                   )}
 
-                  {/* Hover Overlay - desktop only */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-1.5">
-                      {product.inStock && (
-                        <button className="w-full flex items-center justify-center gap-1 py-0.5 text-[9px] border border-amber-400/50 text-amber-400 rounded hover:bg-amber-400 hover:text-background transition-all duration-300">
-                          <ShoppingCart className="h-2 w-2" strokeWidth={1.5} />
-                          <span>Add to Cart</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  {/* Hover overlay on desktop */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </div>
 
@@ -166,6 +157,21 @@ export function Products() {
                     KSH {product.originalPrice.toLocaleString()}
                   </span>
                 )}
+                {/* Buy button — always visible */}
+                <a
+                  href={`https://wa.me/254725297393?text=Hi, I'd like to buy: ${product.name} (KSH ${product.price.toLocaleString()})`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-1.5 w-full flex items-center justify-center gap-0.5 py-1 text-[8px] sm:text-[9px] font-medium rounded transition-all duration-200 ${
+                    product.inStock
+                      ? "bg-amber-400/15 border border-amber-400/40 text-amber-400 hover:bg-amber-400 hover:text-black"
+                      : "bg-white/5 border border-white/10 text-white/25 cursor-not-allowed pointer-events-none"
+                  }`}
+                  onClick={(e) => !product.inStock && e.preventDefault()}
+                >
+                  <ShoppingCart className="h-2 w-2" strokeWidth={1.5} />
+                  <span>{product.inStock ? "Buy" : "Sold Out"}</span>
+                </a>
               </div>
             </div>
           ))}
