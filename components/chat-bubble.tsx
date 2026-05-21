@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Camera, Loader2, ChevronDown } from "lucide-react";
+import { X, Send, Camera, Loader2, ChevronDown, MessageCircle } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -24,12 +24,10 @@ export function ChatBubble() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom on new message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Show greeting on first open
   useEffect(() => {
     if (open && !hasGreeted) {
       setHasGreeted(true);
@@ -55,7 +53,6 @@ export function ChatBubble() {
     setInput("");
     setLoading(true);
 
-    // Add empty assistant message to stream into
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
@@ -63,10 +60,7 @@ export function ChatBubble() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: nextMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: nextMessages.map((m) => ({ role: m.role, content: m.content })),
         }),
       });
 
@@ -74,7 +68,6 @@ export function ChatBubble() {
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
-
       if (!reader) throw new Error("No reader");
 
       while (true) {
@@ -106,10 +99,9 @@ export function ChatBubble() {
   }
 
   function renderContent(text: string) {
-    // Simple markdown: bold
     return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
-        return <strong key={i}>{part.slice(2, -2)}</strong>;
+        return <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
       }
       return <span key={i}>{part}</span>;
     });
@@ -119,56 +111,74 @@ export function ChatBubble() {
     <>
       {/* Chat Window */}
       <div
-        className={`fixed bottom-24 right-5 z-50 w-[340px] sm:w-[380px] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-[#0a0a0a] transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-24 right-5 z-50 w-[340px] sm:w-[380px] flex flex-col rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 origin-bottom-right ${
           open
             ? "opacity-100 scale-100 pointer-events-auto"
             : "opacity-0 scale-90 pointer-events-none"
         }`}
-        style={{ maxHeight: "520px" }}
+        style={{
+          maxHeight: "520px",
+          background: "#000000",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-400">
+        <div
+          style={{ background: "#000000", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          className="flex items-center justify-between px-4 py-3"
+        >
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-black/20 flex items-center justify-center">
+            <div
+              className="h-8 w-8 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+            >
               <Camera className="h-4 w-4 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-bold text-black leading-tight">BMA Photo Studio</p>
-              <div className="flex items-center gap-1">
-                <div className="h-1.5 w-1.5 rounded-full bg-green-700 animate-pulse" />
-                <p className="text-[10px] text-black/70">Online · Nyeri, Kenya</p>
+              <p className="text-xs font-bold text-white leading-tight">BMA Photo Studio</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                <p className="text-[10px] text-white/40">Online · Nyeri, Kenya</p>
               </div>
             </div>
           </div>
           <button
             onClick={() => setOpen(false)}
-            className="text-black/60 hover:text-black transition-colors"
+            className="text-white/30 hover:text-white/70 transition-colors"
           >
             <ChevronDown className="h-5 w-5" />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3" style={{ maxHeight: "320px" }}>
+        <div
+          className="flex-1 overflow-y-auto px-4 py-3 space-y-3"
+          style={{ maxHeight: "320px", scrollbarWidth: "none" }}
+        >
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+            <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               {msg.role === "assistant" && (
-                <div className="h-6 w-6 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
-                  <Camera className="h-3 w-3 text-amber-400" />
+                <div
+                  className="h-6 w-6 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+                >
+                  <Camera className="h-3 w-3 text-white/60" />
                 </div>
               )}
               <div
                 className={`max-w-[78%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
                   msg.role === "user"
-                    ? "bg-amber-400 text-black rounded-br-sm font-medium"
-                    : "bg-white/5 text-white/90 rounded-bl-sm border border-white/5"
+                    ? "text-white rounded-br-sm"
+                    : "text-white/75 rounded-bl-sm"
                 }`}
+                style={
+                  msg.role === "user"
+                    ? { background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.1)" }
+                    : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }
+                }
               >
                 {msg.content === "" && loading && i === messages.length - 1 ? (
-                  <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+                  <Loader2 className="h-3 w-3 animate-spin text-white/40" />
                 ) : (
                   renderContent(msg.content)
                 )}
@@ -176,14 +186,21 @@ export function ChatBubble() {
             </div>
           ))}
 
-          {/* Suggestions (show only if only greeting shown) */}
+          {/* Suggestions */}
           {messages.length === 1 && (
             <div className="space-y-1.5 pt-1">
               {SUGGESTED.map((s) => (
                 <button
                   key={s}
                   onClick={() => sendMessage(s)}
-                  className="w-full text-left text-[11px] px-3 py-1.5 rounded-xl border border-amber-400/20 text-amber-400/80 hover:border-amber-400/60 hover:text-amber-400 hover:bg-amber-400/5 transition-all duration-150"
+                  className="w-full text-left text-[11px] px-3 py-1.5 rounded-xl text-white/50 hover:text-white/80 transition-all duration-150"
+                  style={{ border: "1px solid rgba(255,255,255,0.08)", background: "transparent" }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                  }}
                 >
                   {s}
                 </button>
@@ -195,8 +212,14 @@ export function ChatBubble() {
         </div>
 
         {/* Input */}
-        <div className="px-3 pb-3 pt-2 border-t border-white/5">
-          <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/10 focus-within:border-amber-400/40 transition-colors">
+        <div
+          className="px-3 pb-3 pt-2"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors"
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
             <input
               ref={inputRef}
               value={input}
@@ -209,12 +232,12 @@ export function ChatBubble() {
               }}
               placeholder="Ask anything about BMA…"
               disabled={loading}
-              className="flex-1 bg-transparent text-xs text-white placeholder:text-white/30 outline-none disabled:opacity-50"
+              className="flex-1 bg-transparent text-xs text-white placeholder:text-white/25 outline-none disabled:opacity-50"
             />
             <button
               onClick={() => sendMessage(input)}
               disabled={!input.trim() || loading}
-              className="text-amber-400 disabled:opacity-30 hover:text-amber-300 transition-colors"
+              className="text-white/50 disabled:opacity-20 hover:text-white transition-colors"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -223,27 +246,31 @@ export function ChatBubble() {
               )}
             </button>
           </div>
-          <p className="text-center text-[9px] text-white/20 mt-1.5">Powered by Cerebras · BMA Studios</p>
+          <p className="text-center text-[9px] text-white/15 mt-1.5">
+            Powered by Cerebras · BMA Studios
+          </p>
         </div>
       </div>
 
       {/* Floating Button */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
-          open
-            ? "bg-zinc-800 border border-white/10 rotate-0"
-            : "bg-amber-400 hover:bg-amber-300 hover:scale-105"
-        }`}
+        className="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-105"
+        style={{
+          background: open ? "#111111" : "#000000",
+          border: "1px solid rgba(255,255,255,0.12)",
+        }}
         aria-label="Open chat"
       >
         {open ? (
           <X className="h-5 w-5 text-white" />
         ) : (
           <>
-            <Camera className="h-6 w-6 text-black" strokeWidth={1.5} />
-            {/* Ping indicator */}
-            <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-green-400 border-2 border-[#0a0a0a]" />
+            <MessageCircle className="h-6 w-6 text-white" strokeWidth={1.5} />
+            <span
+              className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-green-400"
+              style={{ border: "2px solid #000" }}
+            />
           </>
         )}
       </button>

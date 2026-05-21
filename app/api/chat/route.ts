@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         { role: "system", content: BMA_SYSTEM_PROMPT },
         ...messages,
       ],
-      model: "qwen-3-32b",
+      model: "gpt-oss-120b",
       stream: true,
       max_completion_tokens: 1024,
       temperature: 0.7,
