@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X, Smartphone, CheckCircle, Loader2, ShoppingBag } from 'lucide-react'
 import { sendStkPush, queryStkPush } from '@/actions/mpesa'
 import { saveOrder } from '@/actions/orders'
@@ -31,6 +31,40 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const [orderId, setOrderId] = useState('')
   const [loading, setLoading] = useState(false)
+  const [countdown, setCountdown] = useState(0)
+  const countdownRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Clean up countdown on unmount
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current)
+    }
+  }, [])
+
+  const startCountdown = (seconds: number) => {
+    setCountdown(seconds)
+    if (countdownRef.current) clearInterval(countdownRef.current)
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  const stopCountdown = () => {
+    if (countdownRef.current) clearInterval(countdownRef.current)
+    setCountdown(0)
+  }
+
+  const formatCountdown = (secs: number) => {
+    const m = Math.floor(secs / 60)
+    const s = secs % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
 
   const handlePay = async () => {
     const kenyanPhone = /^(07\d{8}|01\d{8}|2547\d{8}|2541\d{8}|\+2547\d{8}|\+2541\d{8})$/
@@ -69,14 +103,20 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
     setLoading(false)
     setStep('waiting')
 
+    // Start 2-minute countdown (30 attempts × 4s = 120s)
+    const TOTAL_SECONDS = 120
+    startCountdown(TOTAL_SECONDS)
+
     let attempts = 0
     const checkoutRequestId = data.CheckoutRequestID
 
     const timer = setInterval(async () => {
       attempts++
 
-      if (attempts >= 15) {
+      // 30 attempts × 4s = 2 minutes total
+      if (attempts >= 30) {
         clearInterval(timer)
+        stopCountdown()
         await saveOrder({
           orderId: newOrderId,
           productId: product._id,
@@ -93,8 +133,10 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
       const { data: queryData, error: queryError } = await queryStkPush(checkoutRequestId)
 
       if (queryError) {
+        // 500.001.1001 = STK push still pending (user hasn't entered PIN yet) — keep waiting
         if (queryError?.errorCode !== '500.001.1001') {
           clearInterval(timer)
+          stopCountdown()
           setStep('error')
           setErrorMsg('Payment cancelled or failed.')
           await saveOrder({
@@ -111,6 +153,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
 
       if (queryData?.ResultCode === '0') {
         clearInterval(timer)
+        stopCountdown()
         await saveOrder({
           orderId: newOrderId,
           productId: product._id,
@@ -123,6 +166,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
         setStep('success')
       } else if (queryData?.ResultCode && queryData.ResultCode !== '0') {
         clearInterval(timer)
+        stopCountdown()
         setStep('error')
         setErrorMsg(queryData?.ResultDesc || 'Payment failed.')
         await saveOrder({
@@ -134,7 +178,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
           status: 'failed',
         })
       }
-    }, 3000)
+    }, 4000)
   }
 
   return (
@@ -272,6 +316,38 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 </p>
                 <p className="text-xs text-white/40 mt-1">Enter your PIN to complete payment</p>
               </div>
+
+              {/* Countdown Timer */}
+              {countdown > 0 && (
+                <div
+                  className="rounded-xl p-3 space-y-2"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                >
+                  <p className="text-xs text-white/40">Time remaining to enter PIN</p>
+                  <p
+                    className="text-2xl font-mono font-bold"
+                    style={{ color: countdown <= 30 ? 'rgba(248,113,113,0.9)' : 'rgba(255,255,255,0.85)' }}
+                  >
+                    {formatCountdown(countdown)}
+                  </p>
+                  {/* Progress bar */}
+                  <div
+                    className="w-full h-1 rounded-full overflow-hidden"
+                    style={{ background: 'rgba(255,255,255,0.08)' }}
+                  >
+                    <div
+                      className="h-full rounded-full transition-all duration-1000"
+                      style={{
+                        width: `${(countdown / 120) * 100}%`,
+                        background: countdown <= 30
+                          ? 'rgba(248,113,113,0.7)'
+                          : 'rgba(255,255,255,0.35)',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-center gap-2 text-xs text-white/30">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 Waiting for confirmation...
