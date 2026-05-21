@@ -88,7 +88,7 @@ export function Hero() {
   const backgroundImage = isMobile ? `url('${MOBILE_BG_IMAGE}')` : desktopBg;
 
   return (
-    <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
+    <section id="home" className="relative sm:min-h-screen flex flex-col overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <div
@@ -194,7 +194,7 @@ export function Hero() {
         </div>
 
         {/* Stats Section */}
-        <div className="pt-4 sm:pt-16 pb-4 sm:pb-6">
+        <div className="pt-4 sm:pt-16 pb-10 sm:pb-6">
           <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-6">
 
