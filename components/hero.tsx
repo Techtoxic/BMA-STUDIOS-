@@ -77,7 +77,7 @@ export function Hero() {
 
         {/* Headline */}
         <h1
-          className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-[2.6rem] leading-[1.05] font-bold sm:text-5xl lg:text-7xl mb-4"
+          className="opacity-0 animate-slide-in-left font-[var(--font-heading)] text-[2rem] leading-[1.1] font-bold sm:text-5xl lg:text-7xl mb-4"
           style={{ animationFillMode: "forwards" }}
         >
           <span className="text-white">Capturing Your</span>
