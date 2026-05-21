@@ -68,11 +68,10 @@ export function Contact() {
           {/* LEFT — info panel */}
           <div>
             <h2 className="font-[var(--font-heading)] text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-[1.1] mb-2">
-              Get In<br />
-              <span className="text-amber-400">Touch</span>
+              Get In <span className="text-amber-400">Touch</span>
             </h2>
             <p className="text-sm text-muted-foreground mb-8 max-w-sm leading-relaxed">
-              Ready to book a session or have a question? Reach out — we respond fast on WhatsApp.
+              Ready to book a session or have a question? We respond fast on WhatsApp.
             </p>
 
             {/* Contact details */}
@@ -192,7 +191,7 @@ export function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl bg-amber-400 text-black hover:bg-amber-300 active:scale-[0.98] transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium rounded-xl border border-amber-400/40 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20 active:scale-[0.98] transition-all duration-200"
                 >
                   {sent ? "✓ Sent to WhatsApp!" : <><Send className="h-3.5 w-3.5" /> Send Message</>}
                 </button>
