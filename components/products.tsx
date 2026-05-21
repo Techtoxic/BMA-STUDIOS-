@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Star, X, ChevronLeft, ChevronRight, ArrowLeft, Layers } from "lucide-react";
 import { getProducts, urlFor } from "@/lib/sanity";
+import { MpesaModal } from "@/components/mpesa-modal";
 
 interface Product {
   _id: string;
@@ -24,6 +25,7 @@ export function Products() {
   const [loading, setLoading] = useState(true);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [mpesaProduct, setMpesaProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -379,20 +381,20 @@ export function Products() {
                 </p>
               )}
 
-              <a
-                href={`https://wa.me/254725297393?text=Hi, I'd like to buy: ${selectedProduct.name} (KSH ${selectedProduct.price.toLocaleString()})`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  if (selectedProduct.inStock) setMpesaProduct(selectedProduct)
+                }}
+                disabled={!selectedProduct.inStock}
                 className={`mt-3 w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
                   selectedProduct.inStock
                     ? "bg-amber-400 text-black hover:bg-amber-300"
                     : "bg-white/10 text-white/30 cursor-not-allowed pointer-events-none"
                 }`}
-                onClick={(e) => !selectedProduct.inStock && e.preventDefault()}
               >
                 <ShoppingCart className="h-4 w-4" strokeWidth={2} />
-                {selectedProduct.inStock ? "Buy via WhatsApp" : "Sold Out"}
-              </a>
+                {selectedProduct.inStock ? "Buy via M-Pesa" : "Sold Out"}
+              </button>
 
               {/* Dot indicators */}
               {categoryItems.length > 1 && (
@@ -411,6 +413,13 @@ export function Products() {
             </div>
           </div>
         </div>
+      )}
+      {/* ===== M-PESA MODAL ===== */}
+      {mpesaProduct && (
+        <MpesaModal
+          product={mpesaProduct}
+          onClose={() => setMpesaProduct(null)}
+        />
       )}
     </>
   );
