@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Star, X, ChevronLeft, ChevronRight, ArrowLeft, Layers } from "lucide-react";
 import { getProducts, urlFor } from "@/lib/sanity";
@@ -24,11 +24,6 @@ export function Products() {
   const [loading, setLoading] = useState(true);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [mobileSlide, setMobileSlide] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -62,44 +57,6 @@ export function Products() {
 
   // Items in open category
   const categoryItems = openCategory ? categoryMap[openCategory] || [] : [];
-
-  // Reset slide when category changes
-  useEffect(() => {
-    setMobileSlide(0);
-    setIsAutoPlaying(true);
-  }, [openCategory]);
-
-  // Auto-advance mobile carousel
-  useEffect(() => {
-    if (!openCategory || categoryItems.length <= 1 || !isAutoPlaying) return;
-    autoPlayRef.current = setInterval(() => {
-      setMobileSlide((prev) => (prev + 1) % categoryItems.length);
-    }, 3000);
-    return () => {
-      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
-    };
-  }, [openCategory, categoryItems.length, isAutoPlaying]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    setIsAutoPlaying(false);
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        setMobileSlide((prev) => (prev + 1) % categoryItems.length);
-      } else {
-        setMobileSlide((prev) => (prev - 1 + categoryItems.length) % categoryItems.length);
-      }
-    }
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  }, [categoryItems.length]);
 
   // Lightbox navigation
   function openLightbox(product: Product) {
@@ -177,7 +134,6 @@ export function Products() {
               {categoryNames.map((catName) => {
                 const items = categoryMap[catName];
                 const total = items.length;
-                // Show up to 2 stacked preview images
                 const previews = items.slice(0, 2);
 
                 return (
@@ -187,7 +143,6 @@ export function Products() {
                     onClick={() => setOpenCategory(catName)}
                   >
                     <div className="relative rounded-lg sm:rounded-xl overflow-hidden">
-                      {/* Stacked image previews */}
                       {previews.map((item, i) => (
                         <div
                           key={item._id}
@@ -247,129 +202,86 @@ export function Products() {
             </div>
           )}
 
-          {/* ===== PRODUCTS VIEW (open category) ===== */}
+          {/* ===== PRODUCTS GRID VIEW (open category) — same on mobile & desktop ===== */}
           {openCategory && (
             <>
-              {/* Mobile Carousel */}
-              <div
-                className="md:hidden relative overflow-hidden rounded-xl"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <div className="relative aspect-[3/4] w-full">
-                  {categoryItems.map((product, idx) => (
-                    <div
-                      key={product._id}
-                      className="absolute inset-0 transition-all duration-500 ease-in-out"
-                      style={{
-                        transform: `translateX(${(idx - mobileSlide) * 100}%)`,
-                        opacity: idx === mobileSlide ? 1 : 0.4,
-                      }}
-                      onClick={() => idx === mobileSlide && openLightbox(product)}
-                    >
-                      <Image
-                        src={getImageSrc(product)}
-                        alt={product.name}
-                        fill
-                        sizes="100vw"
-                        className="object-cover"
-                        priority={idx === mobileSlide}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <p className="text-sm font-semibold text-white">{product.name}</p>
-                        <p className="text-amber-400 text-sm font-bold mt-0.5">KSH {product.price.toLocaleString()}</p>
-                        {product.originalPrice && (
-                          <p className="text-[10px] text-white/50 line-through">KSH {product.originalPrice.toLocaleString()}</p>
-                        )}
-                        <p className="text-[10px] text-white/50 mt-1">Tap to view & buy</p>
-                      </div>
-                      {!product.inStock && (
-                        <div className="absolute top-3 left-3 bg-red-500/80 text-white text-[9px] font-medium px-2 py-0.5 rounded-full">
-                          Sold Out
-                        </div>
-                      )}
-                      {product.originalPrice && product.inStock && (
-                        <div className="absolute top-3 left-3 bg-amber-400 text-black text-[9px] font-medium px-2 py-0.5 rounded-full">
-                          Sale
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Progress dots */}
-                <div className="flex items-center justify-center gap-1.5 mt-3 pb-1">
-                  {categoryItems.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setMobileSlide(idx);
-                        setIsAutoPlaying(false);
-                        setTimeout(() => setIsAutoPlaying(true), 5000);
-                      }}
-                      className={`rounded-full transition-all duration-300 ${
-                        idx === mobileSlide ? "w-5 h-1.5 bg-amber-400" : "w-1.5 h-1.5 bg-white/30"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Counter */}
-                <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1">
-                  <span className="text-[10px] text-white font-medium">
-                    {mobileSlide + 1} / {categoryItems.length}
-                  </span>
-                </div>
-              </div>
-
-              {/* Desktop Grid */}
-              <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
                 {categoryItems.map((product) => (
                   <div
                     key={product._id}
-                    className="group cursor-pointer"
+                    className="group cursor-pointer flex flex-col"
                     onClick={() => openLightbox(product)}
                   >
+                    {/* Image */}
                     <div className="relative overflow-hidden rounded-lg">
                       <div className="relative aspect-[3/4] w-full">
                         <Image
                           src={getImageSrc(product, 300, 400)}
                           alt={product.name}
                           fill
-                          sizes="(max-width: 1024px) 33vw, 20vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          sizes="(max-width: 640px) 33vw, (max-width: 1024px) 33vw, 20vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="absolute bottom-0 left-0 right-0 p-2">
-                          <p className="text-xs font-semibold text-white">{product.name}</p>
-                          <p className="text-amber-400 text-xs font-bold">KSH {product.price.toLocaleString()}</p>
-                        </div>
-                      </div>
                       {!product.inStock && (
-                        <div className="absolute top-2 left-2 bg-red-500/80 text-white text-[9px] font-medium px-1.5 py-0.5 rounded">
+                        <div className="absolute top-1.5 left-1.5 bg-red-500/80 text-white text-[8px] sm:text-[9px] font-medium px-1.5 py-0.5 rounded-full">
                           Sold Out
                         </div>
                       )}
                       {product.originalPrice && product.inStock && (
-                        <div className="absolute top-2 left-2 bg-amber-400 text-black text-[9px] font-medium px-1.5 py-0.5 rounded">
+                        <div className="absolute top-1.5 left-1.5 bg-amber-400 text-black text-[8px] sm:text-[9px] font-medium px-1.5 py-0.5 rounded-full">
                           Sale
                         </div>
                       )}
                     </div>
-                    <div className="mt-1.5 px-0.5">
-                      <p className="text-[10px] sm:text-xs font-medium text-foreground truncate">{product.name}</p>
-                      <p className="text-[10px] sm:text-xs font-semibold text-amber-400 mt-0.5">KSH {product.price.toLocaleString()}</p>
+
+                    {/* Info */}
+                    <div className="mt-1.5 flex flex-col flex-1 px-0.5">
+                      <p className="text-[10px] sm:text-xs font-medium text-foreground line-clamp-2 leading-tight">
+                        {product.name}
+                      </p>
+                      <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
+                        {product.category}
+                      </p>
+
+                      {/* Price + stars row */}
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[10px] sm:text-xs font-bold text-amber-400">
+                          KSH {product.price.toLocaleString()}
+                        </p>
+                        <div className="flex items-center gap-0.5">
+                          <Star className="h-2.5 w-2.5 text-amber-400 fill-amber-400" />
+                          <span className="text-[8px] sm:text-[9px] text-muted-foreground">
+                            {product.rating}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Buy button */}
+                      <button
+                        className={`mt-1.5 w-full flex items-center justify-center gap-1 py-1.5 text-[9px] sm:text-[10px] font-semibold rounded-md transition-all duration-200 ${
+                          product.inStock
+                            ? "bg-amber-400/20 text-amber-400 border border-amber-400/30 hover:bg-amber-400 hover:text-black"
+                            : "bg-white/5 text-white/20 cursor-not-allowed border border-white/10"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (product.inStock) openLightbox(product);
+                        }}
+                        disabled={!product.inStock}
+                      >
+                        <ShoppingCart className="h-2.5 w-2.5" strokeWidth={2} />
+                        {product.inStock ? "Buy" : "Sold Out"}
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
 
               {categoryItems.length === 0 && (
-                <p className="text-center text-muted-foreground text-sm py-8">No products in this category yet.</p>
+                <p className="text-center text-muted-foreground text-sm py-8">
+                  No products in this category yet.
+                </p>
               )}
             </>
           )}
