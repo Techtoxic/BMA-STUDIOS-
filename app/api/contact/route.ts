@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { notifyBMA } from '@/lib/notify'
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -39,6 +40,11 @@ export async function POST(request: NextRequest) {
       message,
       timestamp: new Date().toISOString(),
     });
+
+    await notifyBMA({
+      type: 'contact', name, phone, email, service, message,
+    })
+
 
     // Optional: Send WhatsApp message
     const whatsappMessage = encodeURIComponent(

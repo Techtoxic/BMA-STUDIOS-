@@ -2,28 +2,21 @@ import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
 export const client = createClient({
-  projectId: 'ufopobpc',
-  dataset: 'production',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? 'ufopobpc',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET ?? 'production',
   apiVersion: '2023-05-03',
-  useCdn: false,
+  useCdn: true,
 })
 
 const builder = imageUrlBuilder(client)
 
-export function urlFor(source) {
+export function urlFor(source: any) {
   return builder.image(source)
 }
 
-// Fetch queries
 export async function getServices() {
   const query = `*[_type == "services"] | order(order asc) {
-    _id,
-    title,
-    subtitle,
-    price,
-    icon,
-    orientation,
-    image,
+    _id, title, subtitle, price, icon, orientation, image,
     "imageUrl": image.asset->url
   }`
   return await client.fetch(query)
@@ -31,16 +24,8 @@ export async function getServices() {
 
 export async function getProducts() {
   const query = `*[_type == "products"] | order(order asc) {
-    _id,
-    name,
-    category,
-    price,
-    originalPrice,
-    rating,
-    inStock,
-    description,
-    featured,
-    image,
+    _id, name, category, price, originalPrice, rating,
+    inStock, description, featured, image,
     "imageUrl": image.asset->url
   }`
   return await client.fetch(query)
@@ -48,13 +33,7 @@ export async function getProducts() {
 
 export async function getPortfolio() {
   const query = `*[_type == "portfolio"] | order(date desc) {
-    _id,
-    title,
-    category,
-    client,
-    date,
-    featured,
-    image,
+    _id, title, category, client, date, featured, image,
     "imageUrl": image.asset->url
   }`
   return await client.fetch(query)
@@ -62,15 +41,8 @@ export async function getPortfolio() {
 
 export async function getBlogPosts() {
   const query = `*[_type == "blog"] | order(publishedAt desc) {
-    _id,
-    title,
-    slug,
-    excerpt,
-    category,
-    author,
-    publishedAt,
-    featured,
-    coverImage,
+    _id, title, slug, excerpt, category, author,
+    publishedAt, featured, coverImage,
     "coverImageUrl": coverImage.asset->url
   }`
   return await client.fetch(query)
@@ -78,24 +50,20 @@ export async function getBlogPosts() {
 
 export async function getHero() {
   const query = `*[_type == "hero"] | order(_updatedAt desc) [0] {
-    headline,
-    subheadline,
-    ctaText,
-    phone,
-    backgroundImage,
+    headline, subheadline, ctaText, phone, backgroundImage,
     "backgroundImageUrl": backgroundImage.asset->url
   }`
   return await client.fetch(query)
 }
 
-export async function getPortfolioByCategories(categories) {
+export async function getPortfolioByCategories(categories: string[]) {
   const query = `*[_type == "portfolio" && category in $categories] | order(date desc) {
     _id, title, category, image, "imageUrl": image.asset->url
   }`
   return await client.fetch(query, { categories })
 }
 
-export async function getBlogPostWithBody(id) {
+export async function getBlogPostWithBody(id: string) {
   const query = `*[_type == "blog" && _id == $id][0] {
     _id, title, slug, excerpt, category, author, publishedAt, coverImage,
     "coverImageUrl": coverImage.asset->url,

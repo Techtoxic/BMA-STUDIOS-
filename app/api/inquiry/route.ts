@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { notifyBMA } from '@/lib/notify'
 
 const inquirySchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -35,6 +36,13 @@ export async function POST(request: NextRequest) {
       message,
       timestamp: new Date().toISOString(),
     });
+
+    await notifyBMA({
+      type: 'inquiry', name, phone, email,
+      service: `${type}${itemName ? \` - ${itemName}\` : ''}`,
+      message,
+    })
+
 
     const inquiryMessage = encodeURIComponent(
       `New Inquiry\n\nType: ${type}${itemName ? `\nItem: ${itemName}` : ""}\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "Not provided"}\nMessage: ${message}`
