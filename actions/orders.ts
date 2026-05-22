@@ -10,6 +10,7 @@ export async function saveOrder({
   phone,
   mpesaReceiptNumber,
   checkoutRequestId,
+  sessionToken,
   status,
 }: {
   orderId: string
@@ -19,6 +20,7 @@ export async function saveOrder({
   phone: string
   mpesaReceiptNumber?: string
   checkoutRequestId?: string
+  sessionToken?: string
   status: 'pending' | 'confirmed' | 'failed'
 }) {
   const { error } = await supabase.from('orders').upsert({
@@ -29,6 +31,7 @@ export async function saveOrder({
     phone,
     mpesa_receipt: mpesaReceiptNumber || null,
     checkout_request_id: checkoutRequestId || null,
+    session_token: sessionToken || null,
     status,
     updated_at: new Date().toISOString(),
   })

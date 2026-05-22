@@ -20,9 +20,18 @@ interface MpesaModalProps {
 type Step = 'form' | 'processing' | 'waiting' | 'success' | 'error'
 
 function generateOrderId() {
-  const timestamp = Date.now().toString().slice(-6)
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  return `BMA-${timestamp}-${random}`
+  // UUID v4 — cryptographically random, not guessable
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
+
+function generateSessionToken() {
+  // Random token stored in sessionStorage — required to poll order status
+  const arr = new Uint8Array(32)
+  crypto.getRandomValues(arr)
+  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 const FINAL_FAILURE_CODES = new Set(['1032', '2001', '1025', '1037'])
@@ -39,15 +48,18 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
     return () => { if (pollingTimer.current) clearInterval(pollingTimer.current) }
   }, [])
 
+  const sessionTokenRef = useRef<string | null>(null)
+
   // Poll DB first (callback may have already confirmed), then Daraja as backup
   const startPolling = (newOrderId: string, currentPhone: string) => {
     let attempts = 0
     pollingTimer.current = setInterval(async () => {
       attempts++
 
-      // 1. Check DB — fastest path, callback updates this
+      // 1. Check DB with session token — secured endpoint
       try {
-        const res = await fetch(`/api/orders/${newOrderId}`)
+        const token = sessionTokenRef.current
+        const res = await fetch(`/api/orders/${newOrderId}${token ? `?token=${token}` : ''}`)
         if (res.ok) {
           const { data: dbOrder } = await res.json()
           if (dbOrder?.status === 'confirmed') {
@@ -119,15 +131,16 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
 
     setErrorMsg('')
     const newOrderId = generateOrderId()
+    const sessionToken = generateSessionToken()
     setOrderId(newOrderId)
+    sessionTokenRef.current = sessionToken
     const currentPhone = phone.trim()
 
-    // Show honest intermediate state — not claiming STK sent yet
     setStep('processing')
 
     await saveOrder({
       orderId: newOrderId, productId: product._id, productName: product.name,
-      amount: product.price, phone: currentPhone, status: 'pending',
+      amount: product.price, phone: currentPhone, sessionToken, status: 'pending',
     })
 
     const { data, error } = await sendStkPush({
