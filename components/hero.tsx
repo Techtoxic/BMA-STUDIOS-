@@ -49,7 +49,7 @@ function useTypingEffect() {
 
     // small initial delay so page loads first
     frame.current = setTimeout(tick, 600);
-    return () => clearTimeout(frame.current);
+    return () => clearTimeout(frame.current ?? undefined);
   }, []);
 
   return { line1, line2, showCursor, done };
