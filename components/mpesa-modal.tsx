@@ -17,7 +17,7 @@ interface MpesaModalProps {
   onClose: () => void
 }
 
-type Step = 'form' | 'waiting' | 'success' | 'error'
+type Step = 'form' | 'processing' | 'waiting' | 'success' | 'error'
 
 function generateOrderId() {
   const timestamp = Date.now().toString().slice(-6)
@@ -122,37 +122,30 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
     setOrderId(newOrderId)
     const currentPhone = phone.trim()
 
-    // ✅ Go to waiting IMMEDIATELY — don't make user stare at a loader
-    // STK push arrives on phone fast; UI should match that energy
-    setStep('waiting')
+    // Show honest intermediate state — not claiming STK sent yet
+    setStep('processing')
 
-    // Everything else runs in the background
     await saveOrder({
       orderId: newOrderId, productId: product._id, productName: product.name,
       amount: product.price, phone: currentPhone, status: 'pending',
     })
 
-    // Start polling immediately — callback may confirm before STK push API even returns
-    startPolling(newOrderId, currentPhone)
-
-    // STK push runs async — don't block UI on this
     const { data, error } = await sendStkPush({
       phone: currentPhone, amount: product.price,
       productName: product.name, orderId: newOrderId,
     })
 
     if (error || !data?.CheckoutRequestID) {
-      // Only show error if payment hasn't already been confirmed via polling
-      if (pollingTimer.current) {
-        clearInterval(pollingTimer.current)
-        setStep('error')
-        setErrorMsg('Failed to send M-Pesa prompt. Please try again.')
-      }
+      // STK push actually failed — tell the user honestly
+      setStep('error')
+      setErrorMsg(error || 'Failed to send M-Pesa prompt. Please try again.')
       return
     }
 
-    // Store checkoutRequestId for Daraja backup polling
+    // ✅ STK push confirmed sent — NOW tell user to check phone
     checkoutRef.current = data.CheckoutRequestID
+    setStep('waiting')
+    startPolling(newOrderId, currentPhone)
   }
 
   return (
@@ -166,7 +159,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
         style={{ background: '#000000', border: '1px solid rgba(255,255,255,0.08)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {step !== 'waiting' && (
+        {(step === 'form' || step === 'error' || step === 'success') && (
           <button onClick={onClose}
             className="absolute top-3 right-3 z-10 p-1.5 rounded-full transition-colors text-white/40 hover:text-white/80"
             style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -227,7 +220,21 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
             </div>
           )}
 
-          {/* STEP: Waiting */}
+          {/* STEP: Processing — STK push in flight, honest state */}
+          {step === 'processing' && (
+            <div className="text-center py-6 space-y-4">
+              <div className="mx-auto w-14 h-14 rounded-full flex items-center justify-center"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <Loader2 className="h-6 w-6 text-white/50 animate-spin" />
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">Connecting to M-Pesa...</p>
+                <p className="text-xs text-white/35 mt-1">Please wait, this may take a few seconds</p>
+              </div>
+            </div>
+          )}
+
+          {/* STEP: Waiting — STK confirmed sent */}
           {step === 'waiting' && (
             <div className="text-center py-4 space-y-4">
               <div className="relative mx-auto w-16 h-16">
