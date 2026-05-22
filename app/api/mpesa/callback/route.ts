@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     // Much safer than URL secrets which appear in logs
     const forwarded = request.headers.get('x-forwarded-for') ?? ''
     const ip = forwarded.split(',')[0].trim()
-    const safaricomRanges = ['196.201.214.', '196.201.216.']
+    const safaricomRanges = ['196.201.214.', '196.201.216.', '196.201.212.']
     const isFromSafaricom = safaricomRanges.some(r => ip.startsWith(r))
 
     if (!isFromSafaricom && process.env.NODE_ENV === 'production') {

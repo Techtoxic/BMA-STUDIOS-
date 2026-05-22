@@ -3,25 +3,29 @@ import { supabase } from '@/lib/supabase'
 import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  // Must have either admin cookie OR the order token (passed by frontend after creating order)
   const cookieStore = await cookies()
   const adminAuth = cookieStore.get('admin_auth')
   const isAdmin = adminAuth?.value === (process.env.ADMIN_SECRET ?? 'bma_secret_token')
-
-  // Frontend passes ?token= (the order's own secure token stored in sessionStorage)
   const token = request.nextUrl.searchParams.get('token')
 
+  // Must be admin or have a session token
   if (!isAdmin && !token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Fetch the order by ID (service role bypasses RLS)
   const { data, error } = await supabase
     .from('orders')
-    .select('id, status, mpesa_receipt')
+    .select('id, status, mpesa_receipt, session_token')
     .eq('id', params.id)
-    .eq(token && !isAdmin ? 'session_token' : 'id', token && !isAdmin ? token : params.id)
     .single()
 
-  if (error) return NextResponse.json({ data: null }, { status: 404 })
+  if (error || !data) return NextResponse.json({ data: null }, { status: 404 })
+
+  // If not admin, verify session token matches
+  if (!isAdmin && data.session_token && data.session_token !== token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   return NextResponse.json({ data })
 }
