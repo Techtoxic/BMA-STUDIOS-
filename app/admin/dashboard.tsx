@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search, Trash2 } from 'lucide-react'
+import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface Order {
   id: string
@@ -15,9 +15,85 @@ interface Order {
 }
 
 const STATUS_CONFIG = {
-  confirmed: { label: 'Confirmed', color: 'text-green-400', bg: 'rgba(74,222,128,0.08)', border: 'rgba(74,222,128,0.2)', icon: CheckCircle },
-  pending:   { label: 'Pending',   color: 'text-amber-400', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)', icon: Clock },
-  failed:    { label: 'Failed',    color: 'text-red-400',   bg: 'rgba(248,113,113,0.08)', border: 'rgba(248,113,113,0.2)', icon: XCircle },
+  confirmed: { label: 'Paid', color: 'text-green-400', bg: 'rgba(74,222,128,0.08)', border: 'rgba(74,222,128,0.2)', icon: CheckCircle },
+  pending:   { label: 'Pending', color: 'text-amber-400', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)', icon: Clock },
+  failed:    { label: 'Failed', color: 'text-red-400', bg: 'rgba(248,113,113,0.08)', border: 'rgba(248,113,113,0.2)', icon: XCircle },
+}
+
+function OrderCard({ order }: { order: Order }) {
+  const [expanded, setExpanded] = useState(false)
+  const s = STATUS_CONFIG[order.status]
+  const Icon = s.icon
+
+  return (
+    <div
+      className="rounded-xl overflow-hidden"
+      style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}
+    >
+      {/* Main row — always visible */}
+      <div
+        className="flex items-center gap-3 px-3 py-3 cursor-pointer"
+        onClick={() => setExpanded(!expanded)}
+      >
+        {/* Status icon */}
+        <div className="flex-shrink-0">
+          <span
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold"
+            style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color.replace('text-', '') }}
+          >
+            <Icon className="h-2.5 w-2.5" />
+            {s.label}
+          </span>
+        </div>
+
+        {/* Product + amount */}
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-xs font-semibold truncate">{order.product_name}</p>
+          <p className="text-white/40 text-[10px] mt-0.5">
+            {new Date(order.updated_at).toLocaleDateString('en-KE', {
+              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+            })}
+          </p>
+        </div>
+
+        {/* Amount + expand */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <p className="text-amber-400 text-xs font-bold">KSH {order.amount.toLocaleString()}</p>
+          {expanded
+            ? <ChevronUp className="h-3.5 w-3.5 text-white/30" />
+            : <ChevronDown className="h-3.5 w-3.5 text-white/30" />
+          }
+        </div>
+      </div>
+
+      {/* Expanded details */}
+      {expanded && (
+        <div
+          className="px-3 pb-3 space-y-2 text-xs"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <div className="pt-2 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-white/40">Order ID</span>
+              <span className="font-mono text-white/80 text-[11px]">{order.id}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-white/40">Phone</span>
+              <a href={`tel:${order.phone}`} className="text-white/70 hover:text-white transition-colors">
+                {order.phone}
+              </a>
+            </div>
+            {order.mpesa_receipt && (
+              <div className="flex justify-between items-center">
+                <span className="text-white/40">Receipt</span>
+                <span className="font-mono text-white/80">{order.mpesa_receipt}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function AdminDashboard({ orders }: { orders: Order[] }) {
@@ -28,17 +104,6 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
   const [cleaning, setCleaning] = useState(false)
   const [cleanMsg, setCleanMsg] = useState('')
 
-  const handleCleanup = async () => {
-    setCleaning(true)
-    setCleanMsg('')
-    const res = await fetch('/api/admin/cleanup', { method: 'POST' })
-    const json = await res.json()
-    setCleaning(false)
-    setCleanMsg(json.cleaned > 0 ? `Marked ${json.cleaned} stale order(s) as failed` : 'No stale orders found')
-    if (json.cleaned > 0) router.refresh()
-    setTimeout(() => setCleanMsg(''), 4000)
-  }
-
   const handleLogout = async () => {
     await fetch('/api/admin/login', { method: 'DELETE' })
     router.push('/admin/login')
@@ -48,6 +113,17 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
     setRefreshing(true)
     router.refresh()
     setTimeout(() => setRefreshing(false), 1000)
+  }
+
+  const handleCleanup = async () => {
+    setCleaning(true)
+    setCleanMsg('')
+    const res = await fetch('/api/admin/cleanup', { method: 'POST' })
+    const json = await res.json()
+    setCleaning(false)
+    setCleanMsg(json.cleaned > 0 ? `Cleaned ${json.cleaned} stale` : 'None found')
+    if (json.cleaned > 0) router.refresh()
+    setTimeout(() => setCleanMsg(''), 4000)
   }
 
   const filtered = orders.filter((o) => {
@@ -62,172 +138,105 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
   })
 
   const stats = {
-    total: orders.length,
-    confirmed: orders.filter((o) => o.status === 'confirmed').length,
-    pending: orders.filter((o) => o.status === 'pending').length,
-    failed: orders.filter((o) => o.status === 'failed').length,
-    revenue: orders
-      .filter((o) => o.status === 'confirmed')
-      .reduce((sum, o) => sum + o.amount, 0),
+    revenue: orders.filter(o => o.status === 'confirmed').reduce((s, o) => s + o.amount, 0),
+    confirmed: orders.filter(o => o.status === 'confirmed').length,
+    pending: orders.filter(o => o.status === 'pending').length,
+    failed: orders.filter(o => o.status === 'failed').length,
   }
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', background: '#0a0a0a' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)' }}>
-              <ShoppingBag className="h-4 w-4 text-amber-400" />
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)' }}>
+              <ShoppingBag className="h-3.5 w-3.5 text-amber-400" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">BMA Studios</p>
-              <p className="text-white/40 text-xs">Orders Dashboard</p>
+              <p className="text-white font-semibold text-xs">BMA Studios</p>
+              <p className="text-white/40 text-[10px]">Orders</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {cleanMsg && <span className="text-xs text-white/40 hidden sm:block">{cleanMsg}</span>}
-            <button onClick={handleCleanup} disabled={cleaning}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white/40 hover:text-white/80 text-xs transition-colors disabled:opacity-40"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
-              title="Mark stale pending orders (10+ min old) as failed"
-            >
+          <div className="flex items-center gap-1.5">
+            {cleanMsg && <span className="text-[10px] text-white/40 hidden sm:block">{cleanMsg}</span>}
+            <button onClick={handleCleanup} disabled={cleaning} title="Clean stale pending orders"
+              className="p-1.5 rounded-lg text-white/40 hover:text-white/80 transition-colors disabled:opacity-40"
+              style={{ background: 'rgba(255,255,255,0.05)' }}>
               <Trash2 className={`h-3.5 w-3.5 ${cleaning ? 'animate-pulse' : ''}`} />
-              {cleaning ? 'Cleaning...' : 'Clean Stale'}
             </button>
-            <button
-              onClick={handleRefresh}
-              className="p-2 rounded-lg text-white/40 hover:text-white/80 transition-colors"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <button onClick={handleRefresh}
+              className="p-1.5 rounded-lg text-white/40 hover:text-white/80 transition-colors"
+              style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
             </button>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white/40 hover:text-white/80 text-xs transition-colors"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
-            >
+            <button onClick={handleLogout}
+              className="p-1.5 rounded-lg text-white/40 hover:text-white/80 transition-colors"
+              style={{ background: 'rgba(255,255,255,0.05)' }}>
               <LogOut className="h-3.5 w-3.5" />
-              Logout
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {[
-            { label: 'Revenue', value: `KSH ${stats.revenue.toLocaleString()}`, color: 'text-amber-400' },
-            { label: 'Confirmed', value: stats.confirmed, color: 'text-green-400' },
-            { label: 'Pending', value: stats.pending, color: 'text-amber-400' },
-            { label: 'Failed', value: stats.failed, color: 'text-red-400' },
+            { label: 'Revenue', value: `${stats.revenue.toLocaleString()}`, color: 'text-amber-400', prefix: 'KSH ' },
+            { label: 'Paid', value: `${stats.confirmed}`, color: 'text-green-400' },
+            { label: 'Pending', value: `${stats.pending}`, color: 'text-amber-400' },
+            { label: 'Failed', value: `${stats.failed}`, color: 'text-red-400' },
           ].map((s) => (
-            <div key={s.label} className="rounded-xl p-4" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="text-white/40 text-xs mb-1">{s.label}</p>
-              <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+            <div key={s.label} className="rounded-xl p-2.5 text-center"
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <p className="text-white/40 text-[9px] uppercase tracking-wider mb-1">{s.label}</p>
+              <p className={`text-sm font-bold ${s.color} leading-none`}>
+                {s.prefix && <span className="text-[8px] font-normal">{s.prefix}</span>}
+                {s.value}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* Filters + Search */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by order ID, product, phone, receipt..."
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl text-white text-sm placeholder-white/25 outline-none"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-            />
-          </div>
-          <div className="flex gap-2">
-            {(['all', 'confirmed', 'pending', 'failed'] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className="px-3 py-2 rounded-xl text-xs font-medium capitalize transition-all"
-                style={{
-                  background: filter === f ? 'rgba(251,191,36,0.15)' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${filter === f ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                  color: filter === f ? 'rgb(251,191,36)' : 'rgba(255,255,255,0.5)',
-                }}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search orders, phone, receipt..."
+            className="w-full pl-8 pr-4 py-2.5 rounded-xl text-white text-xs placeholder-white/25 outline-none"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+          />
         </div>
 
-        {/* Orders Table */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
-          {filtered.length === 0 ? (
-            <div className="py-16 text-center text-white/30 text-sm">No orders found</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                    {['Order ID', 'Product', 'Amount', 'Phone', 'Receipt', 'Status', 'Date'].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 text-xs text-white/40 font-medium">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((order, i) => {
-                    const s = STATUS_CONFIG[order.status]
-                    const Icon = s.icon
-                    return (
-                      <tr
-                        key={order.id}
-                        style={{
-                          borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                          background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
-                        }}
-                      >
-                        <td className="px-4 py-3">
-                          <span className="text-xs font-mono text-white/70">{order.id}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm text-white">{order.product_name}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm font-semibold text-amber-400">KSH {order.amount.toLocaleString()}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <a href={`tel:${order.phone}`} className="text-xs text-white/60 hover:text-white transition-colors">{order.phone}</a>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-xs font-mono text-white/50">{order.mpesa_receipt ?? '—'}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium"
-                            style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color.replace('text-', '') }}
-                          >
-                            <Icon className="h-3 w-3" />
-                            {s.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-xs text-white/30">
-                            {new Date(order.updated_at).toLocaleDateString('en-KE', {
-                              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-                            })}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+        {/* Filter pills */}
+        <div className="flex gap-2">
+          {(['all', 'confirmed', 'pending', 'failed'] as const).map((f) => (
+            <button key={f} onClick={() => setFilter(f)}
+              className="flex-1 py-1.5 rounded-lg text-[10px] font-medium capitalize transition-all"
+              style={{
+                background: filter === f ? 'rgba(251,191,36,0.15)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${filter === f ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                color: filter === f ? 'rgb(251,191,36)' : 'rgba(255,255,255,0.4)',
+              }}>
+              {f}
+            </button>
+          ))}
         </div>
 
-        <p className="text-center text-white/20 text-xs">
-          {filtered.length} of {orders.length} orders · Last 100 records
+        {/* Orders — card list, tap to expand */}
+        <div className="space-y-2">
+          {filtered.length === 0
+            ? <div className="py-12 text-center text-white/25 text-sm">No orders found</div>
+            : filtered.map((order) => <OrderCard key={order.id} order={order} />)
+          }
+        </div>
+
+        <p className="text-center text-white/20 text-[10px] pb-4">
+          {filtered.length} of {orders.length} orders
         </p>
       </div>
     </div>

@@ -3,6 +3,14 @@ import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
+    // 🔒 Validate secret token — rejects anyone who isn't Safaricom
+    const secret = request.nextUrl.searchParams.get('secret')
+    const expectedSecret = process.env.CALLBACK_SECRET ?? 'bma_callback_secret'
+    if (secret !== expectedSecret) {
+      console.warn('Callback rejected — invalid secret')
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const callback = body?.Body?.stkCallback
 
@@ -43,10 +51,8 @@ export async function POST(request: NextRequest) {
         .update({ status: 'confirmed', mpesa_receipt: mpesaReceipt, updated_at: new Date().toISOString() })
         .eq('id', order.id)
 
-      // Notify BMA Studios + send customer SMS via n8n
       await notifyViaN8n({
-        orderId: order.id,
-        productName: order.product_name,
+        orderId: order.id, productName: order.product_name,
         amount: amount ?? order.amount,
         customerPhone: customerPhone ?? order.phone,
         mpesaReceipt,
@@ -73,32 +79,29 @@ async function notifyViaN8n({ orderId, productName, amount, customerPhone, mpesa
   customerPhone: string; mpesaReceipt: string; notifyPhone: string
 }) {
   const n8nWebhookUrl = process.env.N8N_BMA_WEBHOOK_URL
-  if (!n8nWebhookUrl) {
-    console.error('N8N_BMA_WEBHOOK_URL not set!')
-    return
-  }
+  if (!n8nWebhookUrl) { console.error('N8N_BMA_WEBHOOK_URL not set!'); return }
+
+  // 🔒 Include shared secret so n8n can reject fake POSTs
+  const webhookSecret = process.env.N8N_WEBHOOK_SECRET ?? 'bma_n8n_secret'
+
   try {
     const res = await fetch(n8nWebhookUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-webhook-secret': webhookSecret,
+      },
       body: JSON.stringify({
-        // BMA Studios WhatsApp notification
-        orderId, productName, amount,
-        phone: customerPhone,
-        mpesaReceipt: mpesaReceipt ?? 'N/A',
-        notifyPhone,
-        // Customer SMS
+        orderId, productName, amount, phone: customerPhone,
+        mpesaReceipt: mpesaReceipt ?? 'N/A', notifyPhone,
         customerPhone,
         customerSms:
           `BMA Studios: Payment of KSH ${amount} received for ${productName}. ` +
           `Order ID: ${orderId}. We will contact you shortly via call or WhatsApp. Thank you!`,
       }),
     })
-    if (!res.ok) {
-      console.error(`n8n webhook failed — status: ${res.status}`)
-    } else {
-      console.log(`📲 n8n notified for order ${orderId}`)
-    }
+    if (!res.ok) console.error(`n8n webhook failed — status: ${res.status}`)
+    else console.log(`📲 n8n notified for order ${orderId}`)
   } catch (err) {
     console.error('n8n notify error:', err)
   }

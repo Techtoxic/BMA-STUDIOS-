@@ -53,7 +53,8 @@ export async function sendStkPush({
 
     const cleaned = phone.replace(/\D/g, '')
     const formattedPhone = `254${cleaned.slice(-9)}`
-    const callbackURL = `https://bmastudio.maxxciey.me/api/mpesa/callback`
+    const callbackSecret = process.env.CALLBACK_SECRET ?? 'bma_callback_secret'
+    const callbackURL = `https://bmastudio.maxxciey.me/api/mpesa/callback?secret=${callbackSecret}`
 
     const response = await axios.post(
       `${MPESA_BASE_URL}/mpesa/stkpush/v1/processrequest`,
