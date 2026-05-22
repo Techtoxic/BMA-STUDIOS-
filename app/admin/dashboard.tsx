@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search } from 'lucide-react'
+import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search, Trash2 } from 'lucide-react'
 
 interface Order {
   id: string
@@ -25,6 +25,19 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'failed'>('all')
   const [refreshing, setRefreshing] = useState(false)
+  const [cleaning, setCleaning] = useState(false)
+  const [cleanMsg, setCleanMsg] = useState('')
+
+  const handleCleanup = async () => {
+    setCleaning(true)
+    setCleanMsg('')
+    const res = await fetch('/api/admin/cleanup', { method: 'POST' })
+    const json = await res.json()
+    setCleaning(false)
+    setCleanMsg(json.cleaned > 0 ? `Marked ${json.cleaned} stale order(s) as failed` : 'No stale orders found')
+    if (json.cleaned > 0) router.refresh()
+    setTimeout(() => setCleanMsg(''), 4000)
+  }
 
   const handleLogout = async () => {
     await fetch('/api/admin/login', { method: 'DELETE' })
@@ -73,6 +86,15 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {cleanMsg && <span className="text-xs text-white/40 hidden sm:block">{cleanMsg}</span>}
+            <button onClick={handleCleanup} disabled={cleaning}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white/40 hover:text-white/80 text-xs transition-colors disabled:opacity-40"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
+              title="Mark stale pending orders (10+ min old) as failed"
+            >
+              <Trash2 className={`h-3.5 w-3.5 ${cleaning ? 'animate-pulse' : ''}`} />
+              {cleaning ? 'Cleaning...' : 'Clean Stale'}
+            </button>
             <button
               onClick={handleRefresh}
               className="p-2 rounded-lg text-white/40 hover:text-white/80 transition-colors"
