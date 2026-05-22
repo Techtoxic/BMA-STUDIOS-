@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Calendar, User, ArrowRight, BookOpen, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getBlogPosts, getBlogPostWithBody, urlFor } from "@/lib/sanity";
@@ -29,7 +29,7 @@ const categoryLabels: { [key: string]: string } = {
 };
 
 // Simple Portable Text renderer — no external deps needed
-function renderBlocks(blocks: any[]): JSX.Element[] {
+function renderBlocks(blocks: any[]): React.ReactElement[] {
   return blocks.map((block, i) => {
     if (block._type === "image" && block.url) {
       return (
