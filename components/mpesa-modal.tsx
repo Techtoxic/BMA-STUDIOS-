@@ -228,7 +228,7 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 <Loader2 className="h-6 w-6 text-white/50 animate-spin" />
               </div>
               <div>
-                <p className="text-white font-semibold text-sm">Connecting to M-Pesa...</p>
+                <p className="text-white font-semibold text-sm">Initiating transaction...</p>
                 <p className="text-xs text-white/35 mt-1">Please wait, this may take a few seconds</p>
               </div>
             </div>
