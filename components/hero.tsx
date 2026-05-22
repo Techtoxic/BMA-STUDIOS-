@@ -13,7 +13,7 @@ function useTypingEffect() {
   const [line2, setLine2] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [done, setDone] = useState(false);
-  const frame = useRef<ReturnType<typeof setTimeout>>();
+  const frame = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let i = 0;
