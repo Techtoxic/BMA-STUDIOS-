@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { CheckoutRequestID, ResultCode, CallbackMetadata } = callback
-    console.log(`Callback received — CheckoutRequestID: ${CheckoutRequestID} ResultCode: ${ResultCode}`)
+    console.log(`Callback — CheckoutRequestID: ${CheckoutRequestID} ResultCode: ${ResultCode}`)
 
     if (ResultCode === 0) {
       const items: Record<string, any> = {}
@@ -23,9 +23,8 @@ export async function POST(request: NextRequest) {
       const mpesaReceipt = items['MpesaReceiptNumber'] ?? null
       const amount = items['Amount'] ?? null
       const customerPhone = items['PhoneNumber']?.toString() ?? null
-      console.log(`Payment confirmed — receipt: ${mpesaReceipt} amount: ${amount} phone: ${customerPhone}`)
+      console.log(`Payment confirmed — receipt: ${mpesaReceipt} phone: ${customerPhone}`)
 
-      // Look up order by checkout_request_id
       const { data: order, error: fetchError } = await supabase
         .from('orders')
         .select('*')
@@ -33,8 +32,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (fetchError || !order) {
-        console.error(`Callback: order NOT FOUND for CheckoutRequestID ${CheckoutRequestID} — error: ${fetchError?.message}`)
-        // Still return 200 so Safaricom doesn't retry
+        console.error(`Order NOT FOUND for ${CheckoutRequestID} — ${fetchError?.message}`)
         return NextResponse.json({ ResultCode: 0, ResultDesc: 'Accepted' })
       }
 
@@ -45,15 +43,18 @@ export async function POST(request: NextRequest) {
         .update({ status: 'confirmed', mpesa_receipt: mpesaReceipt, updated_at: new Date().toISOString() })
         .eq('id', order.id)
 
-      await notifyBMAStudios({
-        orderId: order.id, productName: order.product_name,
+      // Notify BMA Studios + send customer SMS via n8n
+      await notifyViaN8n({
+        orderId: order.id,
+        productName: order.product_name,
         amount: amount ?? order.amount,
-        phone: customerPhone ?? order.phone,
+        customerPhone: customerPhone ?? order.phone,
         mpesaReceipt,
+        notifyPhone: process.env.BMA_NOTIFY_PHONE ?? '254725297393',
       })
 
     } else {
-      console.log(`Payment not successful — ResultCode: ${ResultCode} for ${CheckoutRequestID}`)
+      console.log(`Payment not successful — ResultCode: ${ResultCode}`)
       await supabase
         .from('orders')
         .update({ status: 'failed', updated_at: new Date().toISOString() })
@@ -62,17 +63,18 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ResultCode: 0, ResultDesc: 'Accepted' })
   } catch (error) {
-    console.error('M-Pesa callback error:', error)
+    console.error('Callback error:', error)
     return NextResponse.json({ ResultCode: 0, ResultDesc: 'Accepted' })
   }
 }
 
-async function notifyBMAStudios({ orderId, productName, amount, phone, mpesaReceipt }: {
-  orderId: string; productName: string; amount: number; phone: string; mpesaReceipt: string
+async function notifyViaN8n({ orderId, productName, amount, customerPhone, mpesaReceipt, notifyPhone }: {
+  orderId: string; productName: string; amount: number
+  customerPhone: string; mpesaReceipt: string; notifyPhone: string
 }) {
   const n8nWebhookUrl = process.env.N8N_BMA_WEBHOOK_URL
   if (!n8nWebhookUrl) {
-    console.error('N8N_BMA_WEBHOOK_URL not set — cannot send WhatsApp notification!')
+    console.error('N8N_BMA_WEBHOOK_URL not set!')
     return
   }
   try {
@@ -80,9 +82,16 @@ async function notifyBMAStudios({ orderId, productName, amount, phone, mpesaRece
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        orderId, productName, amount, phone,
+        // BMA Studios WhatsApp notification
+        orderId, productName, amount,
+        phone: customerPhone,
         mpesaReceipt: mpesaReceipt ?? 'N/A',
-        notifyPhone: process.env.BMA_NOTIFY_PHONE ?? '254725297393',
+        notifyPhone,
+        // Customer SMS
+        customerPhone,
+        customerSms:
+          `BMA Studios: Payment of KSH ${amount} received for ${productName}. ` +
+          `Order ID: ${orderId}. We will contact you shortly via call or WhatsApp. Thank you!`,
       }),
     })
     if (!res.ok) {

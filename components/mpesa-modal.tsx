@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { X, Smartphone, CheckCircle, Loader2, ShoppingBag } from 'lucide-react'
+import { X, Smartphone, CheckCircle, Loader2, ShoppingBag, Phone } from 'lucide-react'
 import { sendStkPush, queryStkPush } from '@/actions/mpesa'
 import { saveOrder } from '@/actions/orders'
 
@@ -32,73 +32,81 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
   const [step, setStep] = useState<Step>('form')
   const [errorMsg, setErrorMsg] = useState('')
   const [orderId, setOrderId] = useState('')
-  const [loading, setLoading] = useState(false)
   const pollingTimer = useRef<NodeJS.Timeout | null>(null)
+  const checkoutRef = useRef<string | null>(null)
 
-  // Clean up polling on unmount
   useEffect(() => {
     return () => { if (pollingTimer.current) clearInterval(pollingTimer.current) }
   }, [])
 
-  const startPolling = (newOrderId: string, checkoutRequestId: string, currentPhone: string) => {
+  // Poll DB first (callback may have already confirmed), then Daraja as backup
+  const startPolling = (newOrderId: string, currentPhone: string) => {
     let attempts = 0
     pollingTimer.current = setInterval(async () => {
       attempts++
 
-      // Check DB first — callback may have already confirmed it
-      const { data: dbOrder } = await (async () => {
-        try {
-          const res = await fetch(`/api/orders/${newOrderId}`)
-          if (res.ok) return res.json()
-        } catch {}
-        return { data: null }
-      })()
-
-      if (dbOrder?.status === 'confirmed') {
-        clearInterval(pollingTimer.current!)
-        setStep('success')
-        return
-      }
+      // 1. Check DB — fastest path, callback updates this
+      try {
+        const res = await fetch(`/api/orders/${newOrderId}`)
+        if (res.ok) {
+          const { data: dbOrder } = await res.json()
+          if (dbOrder?.status === 'confirmed') {
+            clearInterval(pollingTimer.current!)
+            setStep('success')
+            return
+          }
+          if (dbOrder?.status === 'failed' && attempts > 3) {
+            clearInterval(pollingTimer.current!)
+            setStep('error')
+            setErrorMsg('Payment was not completed. Please try again.')
+            return
+          }
+        }
+      } catch {}
 
       if (attempts >= 24) {
         clearInterval(pollingTimer.current!)
         await saveOrder({
           orderId: newOrderId, productId: product._id, productName: product.name,
-          amount: product.price, phone: currentPhone, checkoutRequestId, status: 'failed',
+          amount: product.price, phone: currentPhone, status: 'failed',
         })
         setStep('error')
         setErrorMsg('Payment timed out. Please try again.')
         return
       }
 
-      const { data: queryData, error: queryError } = await queryStkPush(checkoutRequestId)
-      if (queryError) return // keep polling
+      // 2. Daraja query as backup (only if we have checkoutRequestId)
+      if (checkoutRef.current) {
+        const { data: queryData, error: queryError } = await queryStkPush(checkoutRef.current)
+        if (queryError) return
 
-      if (queryData?.ResultCode === '0') {
-        clearInterval(pollingTimer.current!)
-        await saveOrder({
-          orderId: newOrderId, productId: product._id, productName: product.name,
-          amount: product.price, phone: currentPhone, checkoutRequestId,
-          mpesaReceiptNumber: queryData?.MpesaReceiptNumber, status: 'confirmed',
-        })
-        setStep('success')
-        return
-      }
+        if (queryData?.ResultCode === '0') {
+          clearInterval(pollingTimer.current!)
+          await saveOrder({
+            orderId: newOrderId, productId: product._id, productName: product.name,
+            amount: product.price, phone: currentPhone,
+            checkoutRequestId: checkoutRef.current,
+            mpesaReceiptNumber: queryData?.MpesaReceiptNumber, status: 'confirmed',
+          })
+          setStep('success')
+          return
+        }
 
-      if (queryData?.ResultCode && FINAL_FAILURE_CODES.has(queryData.ResultCode)) {
-        clearInterval(pollingTimer.current!)
-        setStep('error')
-        setErrorMsg(
-          queryData.ResultCode === '1032' ? 'Payment request was cancelled.' :
-          queryData.ResultCode === '2001' ? 'Wrong M-Pesa PIN entered.' :
-          'Payment was declined. Please try again.'
-        )
-        await saveOrder({
-          orderId: newOrderId, productId: product._id, productName: product.name,
-          amount: product.price, phone: currentPhone, checkoutRequestId, status: 'failed',
-        })
+        if (queryData?.ResultCode && FINAL_FAILURE_CODES.has(queryData.ResultCode)) {
+          clearInterval(pollingTimer.current!)
+          setStep('error')
+          setErrorMsg(
+            queryData.ResultCode === '1032' ? 'Payment request was cancelled.' :
+            queryData.ResultCode === '2001' ? 'Wrong M-Pesa PIN entered.' :
+            'Payment was declined. Please try again.'
+          )
+          await saveOrder({
+            orderId: newOrderId, productId: product._id, productName: product.name,
+            amount: product.price, phone: currentPhone,
+            checkoutRequestId: checkoutRef.current, status: 'failed',
+          })
+        }
       }
-      // Any other code = keep polling
     }, 5000)
   }
 
@@ -110,53 +118,48 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
     }
 
     setErrorMsg('')
-    setLoading(true)
     const newOrderId = generateOrderId()
     setOrderId(newOrderId)
     const currentPhone = phone.trim()
 
+    // ✅ Go to waiting IMMEDIATELY — don't make user stare at a loader
+    // STK push arrives on phone fast; UI should match that energy
+    setStep('waiting')
+
+    // Everything else runs in the background
     await saveOrder({
       orderId: newOrderId, productId: product._id, productName: product.name,
       amount: product.price, phone: currentPhone, status: 'pending',
     })
 
-    // ⚡ Move to waiting after 6s even if API hasn't responded yet
-    // Safaricom fires STK push before their API returns — don't leave user stuck
-    const optimisticTimer = setTimeout(() => {
-      setLoading(false)
-      setStep('waiting')
-    }, 6000)
+    // Start polling immediately — callback may confirm before STK push API even returns
+    startPolling(newOrderId, currentPhone)
 
+    // STK push runs async — don't block UI on this
     const { data, error } = await sendStkPush({
       phone: currentPhone, amount: product.price,
       productName: product.name, orderId: newOrderId,
     })
 
-    clearTimeout(optimisticTimer) // API responded — cancel the optimistic timer
-
     if (error || !data?.CheckoutRequestID) {
-      setLoading(false)
-      setErrorMsg(error || 'Failed to initiate payment. Please try again.')
+      // Only show error if payment hasn't already been confirmed via polling
+      if (pollingTimer.current) {
+        clearInterval(pollingTimer.current)
+        setStep('error')
+        setErrorMsg('Failed to send M-Pesa prompt. Please try again.')
+      }
       return
     }
 
-    const checkoutRequestId = data.CheckoutRequestID
-
-    await saveOrder({
-      orderId: newOrderId, productId: product._id, productName: product.name,
-      amount: product.price, phone: currentPhone, checkoutRequestId, status: 'pending',
-    })
-
-    setLoading(false)
-    setStep('waiting')
-    startPolling(newOrderId, checkoutRequestId, currentPhone)
+    // Store checkoutRequestId for Daraja backup polling
+    checkoutRef.current = data.CheckoutRequestID
   }
 
   return (
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
-      onClick={onClose}
+      onClick={step === 'waiting' ? undefined : onClose}
     >
       <div
         className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
@@ -212,16 +215,14 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 <p>• Enter your PIN to complete payment</p>
                 <p>• Do not close this page</p>
               </div>
-              <button onClick={handlePay} disabled={loading || !phone}
+              <button onClick={handlePay} disabled={!phone}
                 className="w-full flex items-center justify-center gap-2 py-3 font-semibold text-sm rounded-xl transition-all duration-200 text-white disabled:opacity-30 disabled:cursor-not-allowed"
-                style={{ background: loading || !phone ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}
-                onMouseEnter={(e) => { if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.16)' }}
-                onMouseLeave={(e) => { if (!loading && phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)' }}
+                style={{ background: !phone ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}
+                onMouseEnter={(e) => { if (phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.16)' }}
+                onMouseLeave={(e) => { if (phone) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)' }}
               >
-                {loading
-                  ? <><Loader2 className="h-4 w-4 animate-spin" />Sending prompt...</>
-                  : <><Smartphone className="h-4 w-4" />Pay KSH {product.price.toLocaleString()} via M-Pesa</>
-                }
+                <Smartphone className="h-4 w-4" />
+                Pay KSH {product.price.toLocaleString()} via M-Pesa
               </button>
             </div>
           )}
@@ -237,7 +238,9 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
               </div>
               <div>
                 <p className="text-white font-semibold text-sm">Check your phone!</p>
-                <p className="text-xs text-white/40 mt-1">M-Pesa prompt sent to <span className="text-white/80">{phone}</span></p>
+                <p className="text-xs text-white/40 mt-1">
+                  M-Pesa prompt sent to <span className="text-white/80">{phone}</span>
+                </p>
                 <p className="text-xs text-white/40 mt-1">Enter your PIN to complete payment</p>
               </div>
               <div className="flex items-center justify-center gap-2 text-xs text-white/30">
@@ -254,17 +257,40 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.15)' }}>
                 <CheckCircle className="h-8 w-8 text-green-400" />
               </div>
+
               <div>
-                <p className="text-white font-semibold">Payment Confirmed! 🎉</p>
-                <p className="text-xs text-white/40 mt-1">{product.name}</p>
-                <p className="text-white font-bold mt-1">KSH {product.price.toLocaleString()}</p>
+                <p className="text-white font-bold text-base">Payment Received! 🎉</p>
+                <p className="text-white/60 text-sm mt-2 leading-relaxed">
+                  Your transaction has been successfully received.<br />
+                  BMA Studios will get back to you shortly via<br />
+                  <span className="text-white/80 font-medium">phone call or WhatsApp.</span>
+                </p>
               </div>
-              <div className="rounded-xl p-3 text-left space-y-1"
+
+              <div className="rounded-xl p-3 text-left space-y-2"
                 style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="text-xs text-white/40">Order ID</p>
-                <p className="text-sm font-mono font-bold text-white">{orderId}</p>
-                <p className="text-[10px] text-white/30">Screenshot this for your records</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/40">Product</p>
+                  <p className="text-xs text-white font-medium">{product.name}</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/40">Amount Paid</p>
+                  <p className="text-xs text-white font-medium">KSH {product.price.toLocaleString()}</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/40">Order ID</p>
+                  <p className="text-xs font-mono text-white font-medium">{orderId}</p>
+                </div>
               </div>
+
+              <div className="rounded-xl p-3 text-center"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-[11px] text-white/35 leading-relaxed">
+                  You will also receive an SMS confirmation shortly.{'\n'}
+                  Save your Order ID for reference.
+                </p>
+              </div>
+
               <a href={`https://wa.me/254725297393?text=Hi BMA Studios! I just placed an order.%0AOrder ID: ${orderId}%0AProduct: ${product.name}%0AAmount: KSH ${product.price.toLocaleString()}%0APhone: ${phone}`}
                 target="_blank" rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-2.5 text-white font-semibold text-sm rounded-xl transition-all duration-200"
