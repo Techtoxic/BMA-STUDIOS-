@@ -20,15 +20,14 @@ interface MpesaModalProps {
 type Step = 'form' | 'processing' | 'waiting' | 'success' | 'error'
 
 function generateOrderId() {
-  // UUID v4 — cryptographically random, not guessable
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
-  })
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const random = Array.from({ length: 9 }, () =>
+    chars[Math.floor(Math.random() * chars.length)]
+  ).join('')
+  return `BMA-${random}`
 }
 
 function generateSessionToken() {
-  // Random token stored in sessionStorage — required to poll order status
   const arr = new Uint8Array(32)
   crypto.getRandomValues(arr)
   return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('')
