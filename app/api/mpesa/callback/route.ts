@@ -51,10 +51,16 @@ export async function POST(request: NextRequest) {
 
       console.log(`Order found: ${order.id} — updating to confirmed`)
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('orders')
         .update({ status: 'confirmed', mpesa_receipt: mpesaReceipt, updated_at: new Date().toISOString() })
         .eq('id', order.id)
+
+      if (updateError) {
+        console.error(`CRITICAL: Failed to update order ${order.id} with mpesa_receipt — ${updateError.message}`)
+      } else {
+        console.log(`Order ${order.id} updated — mpesa_receipt: ${mpesaReceipt}`)
+      }
 
       await notifyViaN8n({
         orderId: order.id, productName: order.product_name,

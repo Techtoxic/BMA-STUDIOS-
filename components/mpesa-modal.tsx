@@ -137,10 +137,16 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
 
     setStep('processing')
 
-    await saveOrder({
+    const saveResult = await saveOrder({
       orderId: newOrderId, productId: product._id, productName: product.name,
       amount: product.price, phone: currentPhone, sessionToken, status: 'pending',
     })
+
+    if (saveResult?.error) {
+      setStep('error')
+      setErrorMsg('Failed to create order. Please try again.')
+      return
+    }
 
     const { data, error } = await sendStkPush({
       phone: currentPhone, amount: product.price,

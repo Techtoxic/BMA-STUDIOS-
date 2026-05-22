@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { cookies } from 'next/headers'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const cookieStore = await cookies()
   const adminAuth = cookieStore.get('admin_auth')
   const isAdmin = adminAuth?.value === (process.env.ADMIN_SECRET ?? 'bma_secret_token')
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const { data, error } = await supabase
     .from('orders')
     .select('id, status, mpesa_receipt, session_token')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !data) return NextResponse.json({ data: null }, { status: 404 })
