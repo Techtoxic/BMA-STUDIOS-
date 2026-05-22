@@ -3,12 +3,17 @@ import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
-    // 🔒 Validate secret token — rejects anyone who isn't Safaricom
-    const secret = request.nextUrl.searchParams.get('secret')
-    const expectedSecret = process.env.CALLBACK_SECRET ?? 'bma_callback_secret'
-    if (secret !== expectedSecret) {
-      console.warn('Callback rejected — invalid secret')
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // 🔒 IP allowlist — Safaricom only posts from these ranges
+    // Much safer than URL secrets which appear in logs
+    const forwarded = request.headers.get('x-forwarded-for') ?? ''
+    const ip = forwarded.split(',')[0].trim()
+    const safaricomRanges = ['196.201.214.', '196.201.216.']
+    const isFromSafaricom = safaricomRanges.some(r => ip.startsWith(r))
+
+    if (!isFromSafaricom && process.env.NODE_ENV === 'production') {
+      console.warn(`Callback rejected — unknown IP: ${ip}`)
+      // Return 200 so Safaricom doesn't keep retrying when it's the real one
+      return NextResponse.json({ ResultCode: 0, ResultDesc: 'Accepted' })
     }
 
     const body = await request.json()
@@ -20,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { CheckoutRequestID, ResultCode, CallbackMetadata } = callback
-    console.log(`Callback — CheckoutRequestID: ${CheckoutRequestID} ResultCode: ${ResultCode}`)
+    console.log(`Callback — CheckoutRequestID: ${CheckoutRequestID} ResultCode: ${ResultCode} IP: ${ip}`)
 
     if (ResultCode === 0) {
       const items: Record<string, any> = {}
@@ -81,7 +86,6 @@ async function notifyViaN8n({ orderId, productName, amount, customerPhone, mpesa
   const n8nWebhookUrl = process.env.N8N_BMA_WEBHOOK_URL
   if (!n8nWebhookUrl) { console.error('N8N_BMA_WEBHOOK_URL not set!'); return }
 
-  // 🔒 Include shared secret so n8n can reject fake POSTs
   const webhookSecret = process.env.N8N_WEBHOOK_SECRET ?? 'bma_n8n_secret'
 
   try {
