@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     await notifyBMA({
       type: 'inquiry', name, phone, email,
-      service: `${type}${itemName ? \` - ${itemName}\` : ''}`,
+      service: type + (itemName ? ` - ${itemName}` : ''),
       message,
     })
 
