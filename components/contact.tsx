@@ -41,15 +41,34 @@ const QUICK = ["Wedding", "Portrait", "Event", "Studio", "Design"];
 export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = encodeURIComponent(
-      `Hello BMA Photography!\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nService: ${form.service}\nMessage: ${form.message}`
-    );
-    window.open(`https://wa.me/254725297393?text=${msg}`, "_blank");
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (res.ok) {
+        setSent(true);
+        setForm({ name: "", email: "", phone: "", service: "", message: "" });
+        setTimeout(() => setSent(false), 5000);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to send. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -189,11 +208,21 @@ export function Contact() {
                   />
                 </div>
 
+                {error && (
+                  <p className="text-xs text-red-400 text-center">{error}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium rounded-xl border border-amber-400/40 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20 active:scale-[0.98] transition-all duration-200"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium rounded-xl border border-amber-400/40 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {sent ? "✓ Sent to WhatsApp!" : <><Send className="h-3.5 w-3.5" /> Send Message</>}
+                  {sent
+                    ? "✓ Message sent! We'll be in touch shortly."
+                    : loading
+                    ? "Sending..."
+                    : <><Send className="h-3.5 w-3.5" /> Send Message</>
+                  }
                 </button>
               </form>
 
