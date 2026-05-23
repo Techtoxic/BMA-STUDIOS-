@@ -6,7 +6,7 @@ import { Calendar, User, ArrowLeft, BookOpen } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const dynamicParams = true
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string }

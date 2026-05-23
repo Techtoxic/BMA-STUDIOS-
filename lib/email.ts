@@ -106,6 +106,7 @@ export function contactEmail(data: { name: string; email: string; phone?: string
   }
 }
 
+// Sent to BMA Studios (admin notification)
 export function bookingEmail(data: { name: string; email: string; phone: string; service: string; date?: string; time?: string; location?: string; notes?: string }) {
   return {
     subject: `New Booking: ${data.name} — ${data.service}`,
@@ -122,6 +123,28 @@ export function bookingEmail(data: { name: string; email: string; phone: string;
           ${data.location ? `<p><strong>Location:</strong> ${data.location}</p>` : ''}
           ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ''}
         </div>
+      </div>
+    `,
+  }
+}
+
+// Sent to the CLIENT as a confirmation receipt
+export function bookingConfirmationEmail(data: { name: string; service: string; date?: string; time?: string; location?: string; notes?: string }) {
+  return {
+    subject: `Booking Received — BMA Studios`,
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
+        <h2 style="color:#000">We've got your booking! 📸</h2>
+        <p style="color:#555;font-size:14px">Hi ${data.name}, thank you for reaching out to BMA Studios. We've received your booking request and will confirm your appointment shortly via phone or WhatsApp.</p>
+        <div style="background:#f9f9f9;border-radius:12px;padding:20px;margin:20px 0;font-size:14px">
+          <p><strong>Service:</strong> ${data.service}</p>
+          ${data.date ? `<p><strong>Preferred Date:</strong> ${data.date}</p>` : ''}
+          ${data.time ? `<p><strong>Preferred Time:</strong> ${data.time}</p>` : ''}
+          ${data.location ? `<p><strong>Location:</strong> ${data.location}</p>` : ''}
+          ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ''}
+        </div>
+        <p style="color:#555;font-size:13px">Questions? Reach us on WhatsApp or call <strong>+254 725 297393</strong>.</p>
+        <p style="color:#888;font-size:12px;margin-top:24px">BMA Studios · Mahiga Building, Nyeri Town</p>
       </div>
     `,
   }
