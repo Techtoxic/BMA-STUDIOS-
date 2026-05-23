@@ -216,8 +216,8 @@ export function Services() {
           return (
             <a
               key={i}
-              href={`https://wa.me/254725297393?text=Hi, I'm interested in ${svc.title}`}
-              target="_blank" rel="noopener noreferrer"
+              href="#"
+              onClick={e => { e.preventDefault(); setBookingService(svc.title) }}
               data-svc data-index={i}
               onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}

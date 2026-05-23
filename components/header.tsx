@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, MapPin, Camera } from "lucide-react";
+import { Menu, X, Phone, MapPin } from "lucide-react";
+import { BookingModal } from "@/components/booking-modal";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -16,6 +17,7 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,19 +64,23 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Contact Info - Desktop */}
-          <div className="hidden lg:flex items-center gap-6">
+          {/* Contact Info + Book Button - Desktop */}
+          <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4 text-amber-400" />
               <span>Nyeri, Kenya</span>
             </div>
-            <a
-              href="tel:+254725297393"
-              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-400"
-            >
+            <a href="tel:+254725297393"
+              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-400">
               <Phone className="h-4 w-4 text-amber-400" />
               <span>+254 725 297393</span>
             </a>
+            <button
+              onClick={() => setShowBooking(true)}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-black bg-amber-400 hover:bg-amber-300 transition-all"
+            >
+              Book Now
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -116,16 +122,22 @@ export function Header() {
               <MapPin className="h-4 w-4 text-amber-400" />
               <span>Nyeri, Kenya</span>
             </div>
-            <a
-              href="tel:+254725297393"
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-            >
+            <a href="tel:+254725297393"
+              className="flex items-center gap-2 text-sm text-muted-foreground">
               <Phone className="h-4 w-4 text-amber-400" />
               <span>+254 725 297393</span>
             </a>
+            <button
+              onClick={() => { setShowBooking(true); setIsMobileMenuOpen(false) }}
+              className="w-full py-3 rounded-xl text-sm font-semibold text-black bg-amber-400 hover:bg-amber-300 transition-all"
+            >
+              Book a Session
+            </button>
           </div>
         </nav>
       </div>
+
+      {showBooking && <BookingModal onClose={() => setShowBooking(false)} />}
     </header>
   );
 }
