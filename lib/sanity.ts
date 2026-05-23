@@ -74,3 +74,17 @@ export async function getBlogPostWithBody(id: string) {
   }`
   return await client.fetch(query, { id })
 }
+
+export async function getBlogPostBySlug(slug: string) {
+  const query = `*[_type == "blog" && slug.current == $slug][0] {
+    _id, title, slug, excerpt, category, author, publishedAt, featured, coverImage,
+    "coverImageUrl": coverImage.asset->url,
+    body[] {
+      ...,
+      _type == "image" => { ..., "url": asset->url }
+    }
+  }`
+  // Bypass CDN to always get fresh data for individual post pages
+  const freshClient = client.withConfig({ useCdn: false })
+  return await freshClient.fetch(query, { slug })
+}

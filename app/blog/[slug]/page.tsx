@@ -1,4 +1,4 @@
-import { getBlogPosts, getBlogPostWithBody, urlFor } from '@/lib/sanity'
+import { getBlogPosts, getBlogPostBySlug, urlFor } from '@/lib/sanity'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,14 +21,12 @@ const categoryLabels: Record<string, string> = {
 export async function generateStaticParams() {
   const posts = await getBlogPosts()
   return posts.map((p: any) => ({
-    // Use slug if available, otherwise fall back to _id
     slug: p.slug?.current ?? p._id,
   }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const posts = await getBlogPosts()
-  const post = posts.find((p: any) => (p.slug?.current ?? p._id) === params.slug)
+  const post = await getBlogPostBySlug(params.slug)
   if (!post) return {}
   return {
     title: `${post.title} — BMA Studios Blog`,
@@ -84,12 +82,13 @@ function renderBlocks(blocks: any[]) {
 }
 
 export default async function BlogPost({ params }: Props) {
-  const posts = await getBlogPosts()
-  const post = posts.find((p: any) => (p.slug?.current ?? p._id) === params.slug)
+  // Query directly by slug — no more fetch-all-then-filter
+  const post = await getBlogPostBySlug(params.slug)
   if (!post) notFound()
 
-  const fullPost = await getBlogPostWithBody(post._id)
-  const related = posts.filter((p: any) => p._id !== post._id && p.category === post.category).slice(0, 3)
+  const related = (await getBlogPosts())
+    .filter((p: any) => p._id !== post._id && p.category === post.category)
+    .slice(0, 3)
 
   const coverSrc = post.coverImageUrl || (post.coverImage?.asset?._ref
     ? urlFor(post.coverImage).width(1200).height(600).fit('crop').url()
@@ -159,7 +158,7 @@ export default async function BlogPost({ params }: Props) {
 
         {/* Body */}
         <div className="prose-bma">
-          {fullPost?.body ? renderBlocks(fullPost.body) : (
+          {post.body ? renderBlocks(post.body) : (
             <p className="text-white/40 text-sm italic">Full article coming soon.</p>
           )}
         </div>

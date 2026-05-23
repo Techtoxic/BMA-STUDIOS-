@@ -14,14 +14,20 @@ export async function sendEmail({
   toName?: string
   toEmail?: string
 }): Promise<{ ok: boolean; error?: string }> {
-  const apiKey = process.env.BREVO_API_KEY
-  const fromEmail = process.env.BREVO_FROM_EMAIL ?? 'noreply@bmastudio.maxxciey.me'
-  const fromName = process.env.BREVO_FROM_NAME ?? 'BMA Studios'
-  const notifyEmail = process.env.NOTIFICATION_EMAIL ?? 'maxxymaxxy04@gmail.com'
+  const apiKey = process.env.BREVO_API_KEY?.trim()
+  const fromEmail = (process.env.BREVO_FROM_EMAIL ?? 'noreply@bmastudio.maxxciey.me').trim()
+  const fromName = (process.env.BREVO_FROM_NAME ?? 'BMA Studios').trim()
+  const notifyEmail = (process.env.NOTIFICATION_EMAIL ?? 'maxxymaxxy04@gmail.com').trim()
 
   if (!apiKey) {
     console.log('BREVO_API_KEY not set — skipping email')
     return { ok: false, error: 'email_disabled' }
+  }
+
+  // Sanity-check the key format (Brevo keys start with "xkeysib-")
+  if (!apiKey.startsWith('xkeysib-')) {
+    console.error('BREVO_API_KEY looks malformed — should start with "xkeysib-". Got:', apiKey.slice(0, 12) + '...')
+    return { ok: false, error: 'malformed_api_key' }
   }
 
   try {
