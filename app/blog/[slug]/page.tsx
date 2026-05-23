@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { Calendar, User, ArrowLeft, BookOpen } from 'lucide-react'
 import type { Metadata } from 'next'
 
+export const dynamicParams = true
+export const revalidate = 60
+
 interface Props {
   params: { slug: string }
 }
@@ -17,14 +20,15 @@ const categoryLabels: Record<string, string> = {
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts()
-  return posts
-    .filter((p: any) => p.slug?.current)
-    .map((p: any) => ({ slug: p.slug.current }))
+  return posts.map((p: any) => ({
+    // Use slug if available, otherwise fall back to _id
+    slug: p.slug?.current ?? p._id,
+  }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const posts = await getBlogPosts()
-  const post = posts.find((p: any) => p.slug?.current === params.slug)
+  const post = posts.find((p: any) => (p.slug?.current ?? p._id) === params.slug)
   if (!post) return {}
   return {
     title: `${post.title} — BMA Studios Blog`,
@@ -81,7 +85,7 @@ function renderBlocks(blocks: any[]) {
 
 export default async function BlogPost({ params }: Props) {
   const posts = await getBlogPosts()
-  const post = posts.find((p: any) => p.slug?.current === params.slug)
+  const post = posts.find((p: any) => (p.slug?.current ?? p._id) === params.slug)
   if (!post) notFound()
 
   const fullPost = await getBlogPostWithBody(post._id)

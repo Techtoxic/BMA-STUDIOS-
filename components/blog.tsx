@@ -90,9 +90,10 @@ export function Blog() {
   }, [openPost]);
 
   const openModal = async (post: BlogPost, index: number) => {
-    // If post has a slug, navigate to full page
-    if (post.slug?.current) {
-      window.location.href = `/blog/${post.slug.current}`;
+    // If post has a slug, navigate to full page (use _id as fallback)
+    const pageSlug = post.slug?.current ?? post._id
+    if (pageSlug) {
+      window.location.href = `/blog/${pageSlug}`;
       return;
     }
     // Fallback: open in modal
