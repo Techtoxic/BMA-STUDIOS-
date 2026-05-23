@@ -62,18 +62,18 @@ function renderBlocks(blocks: any[]) {
 
     const style = block.style || 'normal'
     const classes: Record<string, string> = {
-      h1: 'text-2xl font-bold text-white mt-10 mb-4',
-      h2: 'text-xl font-bold text-white mt-8 mb-3',
-      h3: 'text-lg font-semibold text-white/90 mt-6 mb-2',
-      h4: 'text-base font-semibold text-white/80 mt-4 mb-2',
-      blockquote: 'border-l-4 border-amber-400 pl-6 italic text-white/60 my-6 py-2',
-      normal: 'text-base text-white/70 leading-relaxed mb-4',
+      h1: 'text-2xl font-bold text-white mt-10 mb-4 break-words',
+      h2: 'text-xl font-bold text-white mt-8 mb-3 break-words',
+      h3: 'text-lg font-semibold text-white/90 mt-6 mb-2 break-words',
+      h4: 'text-base font-semibold text-white/80 mt-4 mb-2 break-words',
+      blockquote: 'border-l-4 border-amber-400 pl-6 italic text-white/60 my-6 py-2 break-words',
+      normal: 'text-base text-white/70 leading-relaxed mb-4 break-words w-full',
     }
     if (block.listItem === 'bullet') {
-      return <li key={i} className="text-base text-white/70 ml-6 mb-2 list-disc" dangerouslySetInnerHTML={{ __html: text }} />
+      return <li key={i} className="text-base text-white/70 ml-6 mb-2 list-disc break-words" dangerouslySetInnerHTML={{ __html: text }} />
     }
     if (block.listItem === 'number') {
-      return <li key={i} className="text-base text-white/70 ml-6 mb-2 list-decimal" dangerouslySetInnerHTML={{ __html: text }} />
+      return <li key={i} className="text-base text-white/70 ml-6 mb-2 list-decimal break-words" dangerouslySetInnerHTML={{ __html: text }} />
     }
     return (
       <p key={i} className={classes[style] || classes.normal}
@@ -96,7 +96,7 @@ export default async function BlogPost({ params }: Props) {
     : null)
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Back nav */}
       <div className="sticky top-0 z-10 border-b border-white/8"
         style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)' }}>
@@ -113,7 +113,7 @@ export default async function BlogPost({ params }: Props) {
         </div>
       </div>
 
-      <article className="max-w-3xl mx-auto px-4 py-10">
+      <article className="max-w-3xl mx-auto px-4 py-10 overflow-x-hidden">
         {/* Category */}
         {post.category && (
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
@@ -158,7 +158,7 @@ export default async function BlogPost({ params }: Props) {
         )}
 
         {/* Body */}
-        <div className="prose-bma">
+        <div className="prose-bma w-full overflow-x-hidden">
           {post.body ? renderBlocks(post.body) : (
             <p className="text-white/40 text-sm italic">Full article coming soon.</p>
           )}
