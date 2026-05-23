@@ -2,7 +2,7 @@ import { getBlogPosts, getBlogPostBySlug, urlFor } from '@/lib/sanity'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, User, ArrowLeft, BookOpen } from 'lucide-react'
+import { Calendar, User, ArrowLeft, BookOpen, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const dynamicParams = true
@@ -18,11 +18,20 @@ const categoryLabels: Record<string, string> = {
   news: 'Studio News', tutorials: 'Tutorials',
 }
 
+function getReadTime(body: any[]): string {
+  if (!body?.length) return '1 min read'
+  const wordCount = body.reduce((acc, block) => {
+    if (block._type !== 'block') return acc
+    const text = block.children?.map((s: any) => s.text || '').join(' ') || ''
+    return acc + text.trim().split(/\s+/).filter(Boolean).length
+  }, 0)
+  const mins = Math.max(1, Math.ceil(wordCount / 200))
+  return `${mins} min read`
+}
+
 export async function generateStaticParams() {
   const posts = await getBlogPosts()
-  return posts.map((p: any) => ({
-    slug: p.slug?.current ?? p._id,
-  }))
+  return posts.map((p: any) => ({ slug: p.slug?.current ?? p._id }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -84,12 +93,18 @@ function renderBlocks(blocks: any[]) {
 
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params
-  const post = await getBlogPostBySlug(slug)
+  const [post, allPosts] = await Promise.all([
+    getBlogPostBySlug(slug),
+    getBlogPosts(),
+  ])
   if (!post) notFound()
 
-  const related = (await getBlogPosts())
-    .filter((p: any) => p._id !== post._id && p.category === post.category)
-    .slice(0, 3)
+  // Prev / Next navigation
+  const currentIndex = allPosts.findIndex((p: any) => p._id === post._id)
+  const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null
+  const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null
+
+  const readTime = getReadTime(post.body)
 
   const coverSrc = post.coverImageUrl || (post.coverImage?.asset?._ref
     ? urlFor(post.coverImage).width(1200).height(600).fit('crop').url()
@@ -123,12 +138,12 @@ export default async function BlogPost({ params }: Props) {
         )}
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4 break-words">
           {post.title}
         </h1>
 
-        {/* Meta */}
-        <div className="flex items-center gap-4 text-sm text-white/40 mb-8">
+        {/* Meta: author · date · read time */}
+        <div className="flex flex-wrap items-center gap-3 text-sm text-white/40 mb-8">
           {post.author && (
             <span className="flex items-center gap-1.5">
               <User className="h-3.5 w-3.5" />{post.author}
@@ -140,6 +155,10 @@ export default async function BlogPost({ params }: Props) {
               {new Date(post.publishedAt).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
           )}
+          <span className="flex items-center gap-1.5 text-amber-400/70">
+            <Clock className="h-3.5 w-3.5" />
+            {readTime}
+          </span>
         </div>
 
         {/* Cover image */}
@@ -175,27 +194,36 @@ export default async function BlogPost({ params }: Props) {
           </Link>
         </div>
 
-        {/* Related posts */}
-        {related.length > 0 && (
-          <div className="mt-12">
-            <h3 className="text-sm font-semibold text-white/40 uppercase tracking-widest mb-4">Related Posts</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {related.map((rel: any) => (
-                <Link key={rel._id} href={`/blog/${rel.slug?.current}`}
-                  className="group rounded-xl overflow-hidden transition-all hover:border-amber-400/30"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  {rel.coverImageUrl && (
-                    <div className="relative aspect-video overflow-hidden">
-                      <Image src={rel.coverImageUrl} alt={rel.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="300px" />
-                    </div>
-                  )}
-                  <div className="p-3">
-                    <p className="text-xs font-semibold text-white/80 group-hover:text-amber-400 transition-colors line-clamp-2">{rel.title}</p>
-                    <p className="text-[10px] text-white/30 mt-1 line-clamp-2">{rel.excerpt}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* Prev / Next navigation */}
+        {(prevPost || nextPost) && (
+          <div className="mt-10 pt-8 border-t border-white/8 grid grid-cols-2 gap-4">
+            {/* Prev = older post */}
+            {prevPost ? (
+              <Link href={`/blog/${prevPost.slug?.current ?? prevPost._id}`}
+                className="group flex flex-col gap-1 p-4 rounded-xl transition-all hover:border-amber-400/30"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <span className="flex items-center gap-1 text-[10px] text-white/30 uppercase tracking-widest">
+                  <ChevronLeft className="h-3 w-3" /> Previous
+                </span>
+                <p className="text-xs font-semibold text-white/70 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                  {prevPost.title}
+                </p>
+              </Link>
+            ) : <div />}
+
+            {/* Next = newer post */}
+            {nextPost ? (
+              <Link href={`/blog/${nextPost.slug?.current ?? nextPost._id}`}
+                className="group flex flex-col gap-1 p-4 rounded-xl text-right transition-all hover:border-amber-400/30"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <span className="flex items-center justify-end gap-1 text-[10px] text-white/30 uppercase tracking-widest">
+                  Next <ChevronRight className="h-3 w-3" />
+                </span>
+                <p className="text-xs font-semibold text-white/70 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                  {nextPost.title}
+                </p>
+              </Link>
+            ) : <div />}
           </div>
         )}
       </article>
