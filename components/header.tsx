@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, MapPin } from "lucide-react";
+import { Menu, X, Phone, MapPin, Camera } from "lucide-react";
 import { BookingModal } from "@/components/booking-modal";
 
 const navLinks = [
