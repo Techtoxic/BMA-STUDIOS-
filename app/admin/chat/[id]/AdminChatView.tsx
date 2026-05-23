@@ -163,7 +163,8 @@ export function AdminChatView({ sessionId }: { sessionId: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col text-white" style={{ maxHeight: '100dvh' }}>
+    <div className="min-h-screen bg-black flex flex-col items-center text-white">
+      <div className="w-full max-w-2xl flex flex-col flex-1" style={{ maxHeight: '100dvh', minHeight: '100dvh' }}>
       {/* Header */}
       <div
         className="px-4 py-3 flex items-center gap-3 flex-shrink-0"
@@ -391,6 +392,7 @@ export function AdminChatView({ sessionId }: { sessionId: string }) {
           {error && <p className="text-red-400 text-[10px] mt-1 px-1">{error}</p>}
         </div>
       )}
+    </div>
     </div>
   )
 }

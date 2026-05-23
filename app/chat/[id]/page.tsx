@@ -183,7 +183,8 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col" style={{ maxHeight: '100dvh' }}>
+    <div className="min-h-screen bg-black flex flex-col items-center" style={{ maxHeight: '100dvh' }}>
+      <div className="w-full max-w-2xl flex flex-col flex-1" style={{ maxHeight: '100dvh' }}>
       {/* Header */}
       <div
         className="px-4 py-3 flex items-center gap-3 flex-shrink-0"
@@ -369,6 +370,7 @@ export default function ChatPage() {
           </p>
         </div>
       )}
+    </div>
     </div>
   )
 }
