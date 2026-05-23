@@ -158,8 +158,8 @@ export default async function BlogPost({ params }: Props) {
               </p>
             )}
 
-            {/* Book CTA */}
-            <div className="rounded-2xl p-4 text-center"
+            {/* Book CTA — desktop only (hidden on mobile, shown at bottom on mobile instead) */}
+            <div className="hidden lg:block rounded-2xl p-4 text-center"
               style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.15)' }}>
               <p className="text-white text-sm font-semibold mb-1">Ready to shoot?</p>
               <p className="text-white/40 text-xs mb-3">BMA Studios · Nyeri Town</p>
@@ -169,8 +169,8 @@ export default async function BlogPost({ params }: Props) {
               </Link>
             </div>
 
-            {/* Quick contact */}
-            <div className="flex flex-col gap-2 text-xs text-white/40">
+            {/* Quick contact — desktop only */}
+            <div className="hidden lg:flex flex-col gap-2 text-xs text-white/40">
               <a href="tel:+254725297393" className="hover:text-amber-400 transition-colors">📞 +254 725 297393</a>
               <a href="https://wa.me/254725297393" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">💬 WhatsApp us</a>
               <span>📍 Mahiga Building, Nyeri Town</span>
@@ -250,6 +250,24 @@ export default async function BlogPost({ params }: Props) {
                 ) : <div />}
               </div>
             )}
+
+            {/* Book CTA + contacts — mobile only (shown after article body) */}
+            <div className="lg:hidden mt-10 pt-8 border-t border-white/8 space-y-4">
+              <div className="rounded-2xl p-4 text-center"
+                style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                <p className="text-white text-sm font-semibold mb-1">Ready to shoot?</p>
+                <p className="text-white/40 text-xs mb-3">BMA Studios · Nyeri Town</p>
+                <Link href="/#contact"
+                  className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-black bg-amber-400 hover:bg-amber-300 transition-all">
+                  Book a Session
+                </Link>
+              </div>
+              <div className="flex flex-col gap-2 text-xs text-white/40">
+                <a href="tel:+254725297393" className="hover:text-amber-400 transition-colors">📞 +254 725 297393</a>
+                <a href="https://wa.me/254725297393" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">💬 WhatsApp us</a>
+                <span>📍 Mahiga Building, Nyeri Town</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
