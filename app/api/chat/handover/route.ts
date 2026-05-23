@@ -91,6 +91,9 @@ export async function POST(req: NextRequest) {
           mpesaReceipt: message,
           customerPhone: null,
           customerSms: null,
+          // Extra fields for template-based WhatsApp notifications
+          sessionId,
+          userName: safeName,
         }),
       })
     } catch (err) {
