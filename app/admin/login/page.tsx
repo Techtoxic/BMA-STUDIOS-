@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock, Loader2 } from 'lucide-react'
 
-export default function AdminLogin() {
+function AdminLoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -23,7 +23,6 @@ export default function AdminLogin() {
     })
 
     if (res.ok) {
-      // Go directly to the page they came from (e.g. the WhatsApp chat link)
       const redirect = searchParams.get('redirect')
       router.push(redirect && redirect.startsWith('/admin') ? redirect : '/admin')
     } else {
@@ -73,5 +72,13 @@ export default function AdminLogin() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function AdminLogin() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   )
 }
