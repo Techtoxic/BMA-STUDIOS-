@@ -150,9 +150,12 @@ export function ChatBubble() {
         fullResponse += chunk;
         setMessages((prev) => {
           const updated = [...prev];
+          // If the response looks like a JSON command, keep showing the
+          // spinner (empty content) so raw JSON never flashes to the user.
+          const display = fullResponse.trim().startsWith("{") ? "" : fullResponse;
           updated[updated.length - 1] = {
             ...updated[updated.length - 1],
-            content: fullResponse,
+            content: display,
           };
           return updated;
         });

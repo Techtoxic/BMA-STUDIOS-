@@ -28,9 +28,6 @@ export async function validateUserToken(
 
   if (error || !data) return null
 
-  // Reject if session closed
-  if (data.status === 'closed') return null
-
   return data
 }
 
