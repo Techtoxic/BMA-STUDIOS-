@@ -9,7 +9,7 @@ export const dynamicParams = true
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 const categoryLabels: Record<string, string> = {
@@ -26,7 +26,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getBlogPostBySlug(params.slug)
+  const { slug } = await params
+  const post = await getBlogPostBySlug(slug)
   if (!post) return {}
   return {
     title: `${post.title} — BMA Studios Blog`,
@@ -82,8 +83,8 @@ function renderBlocks(blocks: any[]) {
 }
 
 export default async function BlogPost({ params }: Props) {
-  // Query directly by slug — no more fetch-all-then-filter
-  const post = await getBlogPostBySlug(params.slug)
+  const { slug } = await params
+  const post = await getBlogPostBySlug(slug)
   if (!post) notFound()
 
   const related = (await getBlogPosts())

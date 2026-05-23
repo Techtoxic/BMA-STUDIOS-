@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: `Booking received! Check ${email} for your confirmation. We'll contact you shortly to confirm your appointment.`,
+        message: `Booking received! We've sent a confirmation to ${email} — please check your inbox (and spam folder just in case). We'll contact you shortly to confirm your appointment.`,
         whatsappUrl: `https://wa.me/254725297393?text=${bookingMessage}`,
         clientEmailSent: clientEmail.ok,
       },
