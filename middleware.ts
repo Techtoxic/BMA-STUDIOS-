@@ -9,7 +9,10 @@ export function middleware(request: NextRequest) {
 
     // Fail closed — if env var not set, always redirect to login
     if (!secret || !auth || auth.value !== secret) {
-      return NextResponse.redirect(new URL('/admin/login', request.url))
+      const loginUrl = new URL('/admin/login', request.url)
+      // Preserve the original destination so after login we go straight there
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
     }
   }
 

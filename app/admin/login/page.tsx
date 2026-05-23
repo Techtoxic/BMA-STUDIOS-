@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock, Loader2 } from 'lucide-react'
 
 export default function AdminLogin() {
@@ -9,6 +9,7 @@ export default function AdminLogin() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +23,9 @@ export default function AdminLogin() {
     })
 
     if (res.ok) {
-      router.push('/admin')
+      // Go directly to the page they came from (e.g. the WhatsApp chat link)
+      const redirect = searchParams.get('redirect')
+      router.push(redirect && redirect.startsWith('/admin') ? redirect : '/admin')
     } else {
       setError('Incorrect password')
       setLoading(false)
