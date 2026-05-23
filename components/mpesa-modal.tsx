@@ -308,6 +308,12 @@ export function MpesaModal({ product, onClose }: MpesaModalProps) {
                 </div>
               </div>
 
+              <a href={`/orders/${orderId}`}
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-white/60 hover:text-white text-xs rounded-xl transition-all"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                View order status page →
+              </a>
+
               <div className="rounded-xl p-3 text-center"
                 style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <p className="text-[11px] text-white/35 leading-relaxed">

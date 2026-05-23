@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Calendar, User, ArrowRight, BookOpen, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getBlogPosts, getBlogPostWithBody, urlFor } from "@/lib/sanity";
 
@@ -89,10 +90,16 @@ export function Blog() {
   }, [openPost]);
 
   const openModal = async (post: BlogPost, index: number) => {
+    // If post has a slug, navigate to full page
+    if (post.slug?.current) {
+      window.location.href = `/blog/${post.slug.current}`;
+      return;
+    }
+    // Fallback: open in modal
     setActiveIndex(index);
     if (post.body) { setOpenPost(post); return; }
     setBodyLoading(true);
-    setOpenPost({ ...post, body: [] }); // show modal immediately
+    setOpenPost({ ...post, body: [] });
     try {
       const full = await getBlogPostWithBody(post._id);
       setOpenPost(full);
