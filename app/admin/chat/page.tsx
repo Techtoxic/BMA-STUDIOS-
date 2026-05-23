@@ -32,6 +32,16 @@ export default async function AdminChatPage() {
     return `${Math.floor(hrs / 24)}d ago`
   }
 
+  type SessionRow = {
+    id: string
+    status: string
+    user_name: string | null
+    user_email: string | null
+    user_phone: string | null
+    created_at: string
+    taken_over_at: string | null
+  }
+
   const StatusBadge = ({ status }: { status: string }) => {
     if (status === 'waiting')
       return (
@@ -52,7 +62,7 @@ export default async function AdminChatPage() {
     )
   }
 
-  const SessionCard = ({ s }: { s: (typeof sessions)[0] }) => (
+  const SessionCard = ({ s }: { s: SessionRow }) => (
     <Link
       href={`/admin/chat/${s.id}`}
       className="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-white/5"
