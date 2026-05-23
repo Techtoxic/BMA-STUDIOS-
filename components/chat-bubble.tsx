@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { X, Send, Camera, Loader2, ChevronDown, MessageCircle } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { X, Send, Camera, Loader2, ChevronDown, MessageCircle, ExternalLink } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+type HandoverState = "idle" | "asking_contact" | "connecting" | "connected";
 
 const SUGGESTED = [
   "What services do you offer?",
@@ -21,6 +23,8 @@ export function ChatBubble() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
+  const [handoverState, setHandoverState] = useState<HandoverState>("idle");
+  const [chatUrl, setChatUrl] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,6 +48,73 @@ export function ChatBubble() {
     }
   }, [open, hasGreeted]);
 
+  async function triggerHandover(
+    userName: string,
+    userPhone: string,
+    userEmail: string,
+    aiHistory: Message[]
+  ) {
+    setHandoverState("connecting");
+
+    // Show connecting message
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: "⏳ Connecting you to a live agent now…",
+      },
+    ]);
+
+    try {
+      const res = await fetch("/api/chat/handover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userName,
+          userPhone,
+          userEmail,
+          aiHistory: aiHistory.map((m) => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      if (!res.ok) throw new Error("Handover failed");
+
+      const data = await res.json();
+      const { sessionId, userToken, chatUrl: url } = data;
+
+      // Build secure URL with token in hash (not sent to server)
+      const fullUrl = `${url}#token=${userToken}`;
+      setChatUrl(fullUrl);
+      setHandoverState("connected");
+
+      setMessages((prev) => {
+        // Remove the "connecting" spinner message
+        const filtered = prev.filter((m) => m.content !== "⏳ Connecting you to a live agent now…");
+        return [
+          ...filtered,
+          {
+            role: "assistant",
+            content:
+              "✅ **You've been connected!** A team member has been notified and will attend to you shortly.\n\nTap the button below to open your live chat — please keep that page open.",
+          },
+        ];
+      });
+    } catch {
+      setHandoverState("idle");
+      setMessages((prev) => {
+        const filtered = prev.filter((m) => m.content !== "⏳ Connecting you to a live agent now…");
+        return [
+          ...filtered,
+          {
+            role: "assistant",
+            content:
+              "Sorry, I couldn't connect you right now. Please call us directly at **+254 725 297393**.",
+          },
+        ];
+      });
+    }
+  }
+
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
 
@@ -53,6 +124,7 @@ export function ChatBubble() {
     setInput("");
     setLoading(true);
 
+    // Placeholder for streaming
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
@@ -70,18 +142,58 @@ export function ChatBubble() {
       const decoder = new TextDecoder();
       if (!reader) throw new Error("No reader");
 
+      let fullResponse = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value);
+        fullResponse += chunk;
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = {
             ...updated[updated.length - 1],
-            content: updated[updated.length - 1].content + chunk,
+            content: fullResponse,
           };
           return updated;
         });
+      }
+
+      // Detect handover JSON from AI
+      const trimmed = fullResponse.trim();
+      try {
+        const parsed = JSON.parse(trimmed);
+
+        if (parsed.action === "handover") {
+          // AI wants to collect contact info
+          setHandoverState("asking_contact");
+          setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              content: parsed.message,
+            };
+            return updated;
+          });
+        } else if (parsed.action === "handover_ready") {
+          // AI has collected contact info — trigger handover
+          const name = parsed.name ?? "Guest";
+          const phone = parsed.phone ?? "";
+          const email = parsed.email ?? "";
+
+          setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              content: parsed.message,
+            };
+            return updated;
+          });
+
+          // Use messages up to and including user's last message as history
+          await triggerHandover(name, phone, email, nextMessages);
+        }
+      } catch {
+        // Not JSON — normal AI response, nothing to do
       }
     } catch {
       setMessages((prev) => {
@@ -103,7 +215,13 @@ export function ChatBubble() {
       if (part.startsWith("**") && part.endsWith("**")) {
         return <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
       }
-      return <span key={i}>{part}</span>;
+      // Render newlines
+      return part.split("\n").map((line, j) => (
+        <span key={`${i}-${j}`}>
+          {line}
+          {j < part.split("\n").length - 1 && <br />}
+        </span>
+      ));
     });
   }
 
@@ -186,8 +304,27 @@ export function ChatBubble() {
             </div>
           ))}
 
+          {/* Live chat link button */}
+          {handoverState === "connected" && chatUrl && (
+            <div className="flex justify-start pl-8">
+              <a
+                href={chatUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-white/80 hover:text-white transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                }}
+              >
+                <ExternalLink className="h-3 w-3" />
+                Open Live Chat
+              </a>
+            </div>
+          )}
+
           {/* Suggestions */}
-          {messages.length === 1 && (
+          {messages.length === 1 && handoverState === "idle" && (
             <div className="space-y-1.5 pt-1">
               {SUGGESTED.map((s) => (
                 <button
@@ -211,45 +348,65 @@ export function ChatBubble() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
-        <div
-          className="px-3 pb-3 pt-2"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-        >
+        {/* Input — hidden once connected to live chat */}
+        {handoverState !== "connected" && (
           <div
-            className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            className="px-3 pb-3 pt-2"
+            style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage(input);
-                }
-              }}
-              placeholder="Ask anything about BMA…"
-              disabled={loading}
-              className="flex-1 bg-transparent text-xs text-white placeholder:text-white/25 outline-none disabled:opacity-50"
-            />
-            <button
-              onClick={() => sendMessage(input)}
-              disabled={!input.trim() || loading}
-              className="text-white/50 disabled:opacity-20 hover:text-white transition-colors"
+            <div
+              className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </button>
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage(input);
+                  }
+                }}
+                placeholder={
+                  handoverState === "asking_contact"
+                    ? "Enter your name & number…"
+                    : handoverState === "connecting"
+                    ? "Connecting…"
+                    : "Ask anything about BMA…"
+                }
+                disabled={loading || handoverState === "connecting"}
+                className="flex-1 bg-transparent text-xs text-white placeholder:text-white/25 outline-none disabled:opacity-50"
+              />
+              <button
+                onClick={() => sendMessage(input)}
+                disabled={!input.trim() || loading || handoverState === "connecting"}
+                className="text-white/50 disabled:opacity-20 hover:text-white transition-colors"
+              >
+                {loading || handoverState === "connecting" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            <p className="text-center text-[9px] text-white/15 mt-1.5">
+              Powered by Cerebras · BMA Studios
+            </p>
           </div>
-          <p className="text-center text-[9px] text-white/15 mt-1.5">
-            Powered by Cerebras · BMA Studios
-          </p>
-        </div>
+        )}
+
+        {/* Connected footer */}
+        {handoverState === "connected" && (
+          <div
+            className="px-4 py-2"
+            style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+          >
+            <p className="text-center text-[10px] text-green-400/60">
+              ✅ Handed over to live agent · BMA Studios
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Floating Button */}

@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
+import { ShoppingBag, CheckCircle, XCircle, Clock, LogOut, RefreshCw, Search, Trash2, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react'
+import Link from 'next/link'
 
 interface Order {
   id: string
@@ -160,6 +161,13 @@ export function AdminDashboard({ orders }: { orders: Order[] }) {
             </div>
           </div>
           <div className="flex items-center gap-1.5">
+            <Link href="/admin/chat"
+              className="p-1.5 rounded-lg text-white/40 hover:text-white/80 transition-colors flex items-center gap-1"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
+              title="Live Chats">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span className="text-[10px] hidden sm:block">Chats</span>
+            </Link>
             {cleanMsg && <span className="text-[10px] text-white/40 hidden sm:block">{cleanMsg}</span>}
             <button onClick={handleCleanup} disabled={cleaning} title="Clean stale pending orders"
               className="p-1.5 rounded-lg text-white/40 hover:text-white/80 transition-colors disabled:opacity-40"
