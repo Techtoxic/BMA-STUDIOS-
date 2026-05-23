@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { sendEmail, orderConfirmedEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,7 +63,16 @@ export async function POST(request: NextRequest) {
         console.log(`Order ${order.id} updated — mpesa_receipt: ${mpesaReceipt}`)
       }
 
-      await notifyViaN8n({
+      // Send order confirmation email to BMA Studios
+      await sendEmail(orderConfirmedEmail({
+        orderId: order.id,
+        productName: order.product_name,
+        amount: amount ?? order.amount,
+        phone: customerPhone ?? order.phone,
+        mpesaReceipt: mpesaReceipt ?? 'N/A',
+      }))
+
+            await notifyViaN8n({
         orderId: order.id, productName: order.product_name,
         amount: amount ?? order.amount,
         customerPhone: customerPhone ?? order.phone,

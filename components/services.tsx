@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BookingModal } from "@/components/booking-modal";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { getServices, getPortfolioByCategories, urlFor } from "@/lib/sanity";
@@ -64,6 +65,7 @@ interface PortfolioThumb {
 }
 
 export function Services() {
+  const [bookingService, setBookingService] = useState<string | null>(null)
   const [services, setServices]               = useState<Service[]>([]);
   const [loading, setLoading]                 = useState(true);
   const [hovered, setHovered]                 = useState<number | null>(null);
@@ -155,8 +157,8 @@ export function Services() {
           return (
             <a
               key={i}
-              href={`https://wa.me/254725297393?text=Hi, I'm interested in ${svc.title}`}
-              target="_blank" rel="noopener noreferrer"
+              href="#"
+              onClick={e => { e.preventDefault(); setBookingService(svc.title) }}
               data-svc data-index={i}
               onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}
@@ -271,7 +273,8 @@ export function Services() {
       {/* Book CTA */}
       <div className="mt-8">
         <a
-          href="https://wa.me/254725297393?text=Hi, I'd like to book a session"
+          href="#"
+          onClick={e => { e.preventDefault(); setBookingService('') }}
           target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/8 px-5 py-2.5 text-sm font-medium text-amber-400 transition-all duration-200 hover:bg-amber-400/15"
         >
@@ -279,6 +282,9 @@ export function Services() {
           <ArrowUpRight className="h-3.5 w-3.5" />
         </a>
       </div>
+    {bookingService !== null && (
+        <BookingModal service={bookingService} onClose={() => setBookingService(null)} />
+      )}
     </section>
   );
 }
