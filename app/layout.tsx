@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Oswald, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { ChatBubble } from '@/components/chat-bubble'
+import { ChatBubbleWrapper } from '@/components/chat-bubble-wrapper'
 import './globals.css'
 
 const oswald = Oswald({ 
@@ -143,7 +143,7 @@ export default function RootLayout({
       </head>
       <body className={`${oswald.variable} ${inter.variable} font-sans antialiased`}>
         {children}
-        <ChatBubble />
+        <ChatBubbleWrapper />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

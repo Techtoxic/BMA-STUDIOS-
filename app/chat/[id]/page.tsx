@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Camera, Send, Loader2, CheckCircle, Clock, XCircle } from 'lucide-react'
 
 interface Message {
@@ -27,7 +27,7 @@ interface Session {
 
 export default function ChatPage() {
   const params = useParams()
-  const searchParams = useSearchParams()
+  const router = useRouter()
   const sessionId = params.id as string
 
   // Token stored in React state only — never localStorage
@@ -38,9 +38,27 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [countdown, setCountdown] = useState<number | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Auto-redirect home when session closes
+  useEffect(() => {
+    if (session?.status === 'closed' && countdown === null) {
+      setCountdown(5)
+    }
+  }, [session?.status, countdown])
+
+  useEffect(() => {
+    if (countdown === null) return
+    if (countdown === 0) {
+      router.push('/')
+      return
+    }
+    const t = setTimeout(() => setCountdown((c) => (c ?? 1) - 1), 1000)
+    return () => clearTimeout(t)
+  }, [countdown, router])
 
   // Extract token from URL hash on first load (hash is not sent to server)
   useEffect(() => {
@@ -285,16 +303,19 @@ export default function ChatPage() {
           </div>
         ))}
 
-        {/* Session closed */}
+        {/* Session closed — countdown redirect */}
         {session?.status === 'closed' && (
           <div
-            className="rounded-xl p-4 text-center"
+            className="rounded-xl p-6 text-center"
             style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
           >
-            <XCircle className="h-6 w-6 text-white/20 mx-auto mb-2" />
-            <p className="text-white/30 text-xs">This session has ended.</p>
-            <p className="text-white/20 text-[10px] mt-1">
-              Need more help? Call us at +254 725 297393
+            <CheckCircle className="h-6 w-6 text-white/20 mx-auto mb-2" />
+            <p className="text-white/50 text-sm font-medium mb-1">Chat has ended</p>
+            <p className="text-white/30 text-xs mb-3">
+              Thank you for chatting with BMA Photo Studio!
+            </p>
+            <p className="text-white/20 text-[10px]">
+              Redirecting you home in {countdown}s…
             </p>
           </div>
         )}

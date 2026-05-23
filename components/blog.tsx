@@ -151,8 +151,6 @@ export function Blog() {
   }
 
   const featuredPost = posts.find((p) => p.featured) || posts[0];
-  const featuredIdx  = posts.indexOf(featuredPost);
-  const otherPosts   = posts.filter((p) => p._id !== featuredPost._id).slice(0, 3);
 
   return (
     <>
@@ -160,94 +158,66 @@ export function Blog() {
         <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20">
           <SectionHeader />
 
-          {/* Featured + Side Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-
-            {/* Featured Post */}
-            <button
-              onClick={() => openModal(featuredPost, featuredIdx)}
-              className="group cursor-pointer text-left w-full"
-            >
-              <div className="relative overflow-hidden rounded-xl">
-                <div className="relative aspect-[16/10] w-full">
-                  <Image
-                    src={getImageSrc(featuredPost)}
-                    alt={featuredPost.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
-                  {featuredPost.category && (
-                    <span className="inline-block px-2 py-0.5 text-[9px] sm:text-[10px] font-medium bg-amber-400 text-background rounded mb-2">
-                      {categoryLabels[featuredPost.category] || featuredPost.category}
-                    </span>
-                  )}
-                  <h3 className="text-sm sm:text-lg font-[var(--font-heading)] font-bold text-white leading-tight mb-1 sm:mb-2">
-                    {featuredPost.title}
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-white/70 line-clamp-2 mb-2">
-                    {featuredPost.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-[9px] sm:text-[10px] text-white/50">
-                      {featuredPost.author && (
-                        <div className="flex items-center gap-1"><User className="h-2.5 w-2.5" /><span>{featuredPost.author}</span></div>
-                      )}
-                      {featuredPost.publishedAt && (
-                        <div className="flex items-center gap-1"><Calendar className="h-2.5 w-2.5" /><span>{formatDate(featuredPost.publishedAt)}</span></div>
-                      )}
-                    </div>
-                    <span className="text-[9px] text-amber-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Read <ArrowRight className="h-2.5 w-2.5" />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* Side Posts */}
-            <div className="flex flex-col gap-3">
-              {otherPosts.map((post) => {
-                const idx = posts.indexOf(post);
-                return (
-                  <button
-                    key={post._id}
-                    onClick={() => openModal(post, idx)}
-                    className="group cursor-pointer flex gap-3 items-start text-left"
-                  >
-                    <div className="relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-lg">
+          {/* 2-column grid on desktop, single column on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            {posts.slice(0, 4).map((post) => {
+              const idx = posts.indexOf(post)
+              const isFeatured = post._id === featuredPost._id
+              return (
+                <button
+                  key={post._id}
+                  onClick={() => openModal(post, idx)}
+                  className="group cursor-pointer text-left w-full"
+                >
+                  <div className="relative overflow-hidden rounded-xl">
+                    <div className="relative aspect-[16/10] w-full">
                       <Image
                         src={getImageSrc(post)}
                         alt={post.title}
                         fill
-                        sizes="112px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <div className="flex-1 min-w-0 py-0.5">
-                      {post.category && (
-                        <span className="inline-block text-[8px] sm:text-[9px] font-medium text-amber-400 uppercase tracking-wider mb-1">
-                          {categoryLabels[post.category] || post.category}
-                        </span>
-                      )}
-                      <h4 className="text-xs sm:text-sm font-[var(--font-heading)] font-semibold text-foreground leading-tight mb-1 line-clamp-2 group-hover:text-amber-400 transition-colors">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        {post.category && (
+                          <span className="inline-block px-2 py-0.5 text-[9px] font-medium bg-amber-400 text-background rounded">
+                            {categoryLabels[post.category] || post.category}
+                          </span>
+                        )}
+                        {isFeatured && (
+                          <span className="inline-block px-2 py-0.5 text-[9px] font-medium bg-white/10 text-white/70 rounded border border-white/10">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-sm sm:text-base font-[var(--font-heading)] font-bold text-white leading-tight mb-1">
                         {post.title}
-                      </h4>
-                      <p className="text-[9px] sm:text-[10px] text-muted-foreground line-clamp-2 mb-1.5">
+                      </h3>
+                      <p className="text-[10px] sm:text-xs text-white/60 line-clamp-2 mb-2">
                         {post.excerpt}
                       </p>
-                      <div className="flex items-center gap-1 text-[8px] text-amber-400/70 group-hover:text-amber-400 transition-colors">
-                        <span>Read more</span>
-                        <ArrowRight className="h-2 w-2" />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 text-[9px] sm:text-[10px] text-white/40">
+                          {post.author && (
+                            <div className="flex items-center gap-1"><User className="h-2.5 w-2.5" /><span>{post.author}</span></div>
+                          )}
+                          {post.publishedAt && (
+                            <div className="flex items-center gap-1"><Calendar className="h-2.5 w-2.5" /><span>{formatDate(post.publishedAt)}</span></div>
+                          )}
+                        </div>
+                        <span className="text-[9px] text-amber-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Read <ArrowRight className="h-2.5 w-2.5" />
+                        </span>
                       </div>
                     </div>
-                  </button>
-                );
-              })}
-            </div>
+                  </div>
+                </button>
+              )
+            })}
+
           </div>
 
           {posts.length > 4 && (
