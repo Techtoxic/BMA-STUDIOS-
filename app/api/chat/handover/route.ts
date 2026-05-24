@@ -91,9 +91,11 @@ export async function POST(req: NextRequest) {
           mpesaReceipt: message,
           customerPhone: null,
           customerSms: null,
-          // Extra fields for template-based WhatsApp notifications
+          // Template-specific fields for bma_live_chat_alert
           sessionId,
           userName: safeName,
+          userPhone: safePhone ?? 'N/A',
+          adminUrl,
         }),
       })
     } catch (err) {

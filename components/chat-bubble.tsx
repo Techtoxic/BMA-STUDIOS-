@@ -232,13 +232,13 @@ export function ChatBubble() {
     <>
       {/* Chat Window */}
       <div
-        className={`fixed bottom-24 right-5 z-50 w-[340px] sm:w-[380px] flex flex-col rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-24 right-5 z-50 w-[340px] sm:w-[400px] md:w-[440px] flex flex-col rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 origin-bottom-right ${
           open
             ? "opacity-100 scale-100 pointer-events-auto"
             : "opacity-0 scale-90 pointer-events-none"
         }`}
         style={{
-          maxHeight: "520px",
+          maxHeight: "clamp(520px, 80vh, 720px)",
           background: "#000000",
           border: "1px solid rgba(255,255,255,0.08)",
         }}
