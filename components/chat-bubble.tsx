@@ -238,8 +238,7 @@ export function ChatBubble() {
             : "opacity-0 scale-90 pointer-events-none"
         }`}
         style={{
-          maxHeight: "clamp(520px, 85vh, 860px)",
-          height: "clamp(520px, 85vh, 860px)",
+          maxHeight: "85vh",
           background: "#000000",
           border: "1px solid rgba(255,255,255,0.08)",
         }}
@@ -275,7 +274,7 @@ export function ChatBubble() {
         {/* Messages */}
         <div
           className="flex-1 overflow-y-auto px-4 py-3 space-y-3"
-          style={{ minHeight: "80px", maxHeight: "420px", scrollbarWidth: "none" }}
+          style={{ maxHeight: "55vh", scrollbarWidth: "none" }}
         >
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
