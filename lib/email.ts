@@ -68,21 +68,22 @@ export function orderConfirmedEmail(order: {
   mpesaReceipt: string
 }) {
   return {
-    subject: `Order Confirmed — ${order.orderId}`,
+    subject: `💰 New Order Paid — ${order.orderId}`,
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
-        <h2 style="color:#000;margin-bottom:4px">Payment Confirmed ✅</h2>
-        <p style="color:#666;font-size:14px">Thank you for your order at BMA Studios.</p>
+        <h2 style="color:#000;margin-bottom:4px">New Order Received ✅</h2>
+        <p style="color:#666;font-size:14px">A customer has just completed an M-Pesa payment on BMA Studios.</p>
         <div style="background:#f9f9f9;border-radius:12px;padding:20px;margin:20px 0">
           <table style="width:100%;font-size:14px">
             <tr><td style="color:#888;padding:4px 0">Product</td><td style="font-weight:600">${order.productName}</td></tr>
             <tr><td style="color:#888;padding:4px 0">Amount</td><td style="font-weight:600">KSH ${order.amount.toLocaleString()}</td></tr>
+            <tr><td style="color:#888;padding:4px 0">Customer Phone</td><td style="font-weight:600">${order.phone}</td></tr>
             <tr><td style="color:#888;padding:4px 0">M-Pesa Receipt</td><td style="font-family:monospace">${order.mpesaReceipt}</td></tr>
             <tr><td style="color:#888;padding:4px 0">Order ID</td><td style="font-family:monospace">${order.orderId}</td></tr>
           </table>
         </div>
-        <p style="color:#666;font-size:13px">BMA Studios will contact you shortly via phone or WhatsApp to arrange delivery/pickup.</p>
-        <p style="color:#888;font-size:12px;margin-top:24px">BMA Studios · Mahiga Building, Nyeri Town · +254 725 297393</p>
+        <p style="color:#666;font-size:13px">Contact the customer on <strong>${order.phone}</strong> via phone or WhatsApp to arrange delivery/pickup.</p>
+        <a href="https://bmastudio.maxxciey.me/admin" style="display:inline-block;margin-top:16px;padding:10px 20px;background:#000;color:#fff;border-radius:8px;text-decoration:none;font-size:14px">View Dashboard →</a>
       </div>
     `,
   }
