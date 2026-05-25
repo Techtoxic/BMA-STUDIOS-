@@ -275,7 +275,7 @@ export function ChatBubble() {
         {/* Messages */}
         <div
           className="flex-1 overflow-y-auto px-4 py-3 space-y-3"
-          style={{ maxHeight: "600px", scrollbarWidth: "none" }}
+          style={{ minHeight: "80px", maxHeight: "420px", scrollbarWidth: "none" }}
         >
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -394,9 +394,7 @@ export function ChatBubble() {
                 )}
               </button>
             </div>
-            <p className="text-center text-[9px] text-white/15 mt-1.5">
-              Powered by Cerebras · BMA Studios
-            </p>
+
           </div>
         )}
 
